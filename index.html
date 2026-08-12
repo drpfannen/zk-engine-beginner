@@ -2080,7 +2080,7 @@ function topSetRpeFor(zone,wib,lengthWk,phase){
   if(lengthWk>=3&&wib===last-1) return Math.min(ceil,9);     // penultimate week
   return Math.min(ceil,8);                                  // repeatable working effort
 }
-const BACKOFF_PCT=0.90;                                                        // back-offs at 90% of the top set (ours)
+const BACKOFF_PCT=0.80;                                                        // back-offs at 80% of the top set (ours) — same reps as the top set, so this is deliberately light: bar speed and technique under fatigue rather than added stimulus
 const ACC_TARGET_RPE={accessory:"7\u20138",core:"8\u20139"};                   // (ours) tier-based accessory RPE targets — not from Z&K
 const RPE_GUARD=0.10;                                                          // top set may drift ±10% from the suggestion before we flag it (ours)
 function rpeModeOn(){ const e=$("#rpemode"); return e?e.value==="on":true; }
