@@ -2286,15 +2286,24 @@ function renderToday(){
         day.splice(idx<0?day.length:idx,0,item);
       }
     }
-    // apply on-the-fly exercise swaps (per block+day+slot), recomputing load for main swaps
+    // Apply on-the-fly exercise swaps, recomputing load for main swaps. The key includes the WEEK:
+    // without it a swap made in week 3 also rewrote the same slot in weeks 1-2, retroactively changing
+    // sessions that were already trained. Legacy block|day|slot keys are still honoured for the current
+    // week only, so existing swaps keep working without reaching backwards.
     day.forEach((it,idx)=>{
-      const ov=state.swaps[`${b.index}|${di}|${idx}`]; if(!ov) return;
+      const ov=state.swaps[`${b.index}|${gw}|${di}|${idx}`]||state.swaps[`${b.index}|${di}|${idx}`]; if(!ov) return;
       if(ov.type==="main"&&it.group==="main"){const mv=ZK.MAIN_MOVEMENTS.find(m=>m.id===ov.id); if(mv){it.name=mv.name;it.cue=mv.cue;it.swapped=true;it.load=ZK.roundToPlates(ZK.ZONE_PCT[it.zone]*effMaxOf(it.lift)*mv.loadFactor,kit().plates,kit().bar);}}
       else if(ov.type==="acc"&&(it.group==="accessory"||it.group==="core")){const ac=ZK.ACCESSORIES.find(a=>a.id===ov.id); if(ac){it.name=ac.name;it.sets=ac.sets;it.reps=ac.reps;it.rest=ac.restSec+"s";it.cue=ac.cue;it.swapped=true;}}
     });
+    // Once a session has been logged, its exercises are fixed: re-render them from what was recorded,
+    // not from the current template. Otherwise editing this week's plan rewrites the exercise names on
+    // a workout you already completed (the logged sets themselves were always intact underneath).
+    { const _done=(state.log||[]).filter(s=>s.block===b.index&&s.gw===gw&&s.day===di);
+      if(_done.length){ const seen=[]; _done.forEach(s=>{ if(s.exName&&!seen.includes(s.exName)) seen.push(s.exName); });
+        seen.forEach((nm,i)=>{ if(day[i]&&day[i].name!==nm){ day[i].name=nm; day[i].locked=true; } }); } }
     // apply pinned loads (per block+day+slot): the pin wins; readiness becomes advice, not an override
     day.forEach((it,idx)=>{ if(it.load==null) return;
-      const pn=state.pins[`${b.index}|${di}|${idx}`]; if(!pn) return;
+      const pn=state.pins[`${b.index}|${gw}|${di}|${idx}`]||state.pins[`${b.index}|${di}|${idx}`]; if(!pn) return;
       it.advisedLoad=it.load;                                              // what the readiness-adjusted engine would load
       it.load=Math.round(toUnit(pn.load,pn.unit||state.unit,state.unit));  // your pinned load, in the current unit
       it.pinned=true; });
@@ -2373,7 +2382,7 @@ function renderToday(){
       if(e.pinned&&e.advisedLoad!=null){const adv=Math.round(e.advisedLoad),pl=Math.round(e.load); if(adv!==pl){const heavier=pl>adv&&band!=="green"; card.appendChild(el("div","pinadvice"+(heavier?" warn":""),`\ud83d\udccc holding ${pl} ${state.unit} \u00b7 readiness-advised ~${adv} ${state.unit}`+(heavier?" \u2014 heavier than today's readiness suggests":"")));}}
       if(e.cue) card.appendChild(el("div","excue",e.cue));
       if(e.group==="main"||e.group==="accessory"||e.group==="core"){
-        const key=`${b.index}|${di}|${idx}`;
+        const key=`${b.index}|${gw}|${di}|${idx}`;
         const bar=el("div","swapbar"); const btn=el("button","swapbtn"); btn.innerHTML="⇄ swap"; bar.appendChild(btn);
         if(state.swaps[key]){const rst=el("button","swapbtn ghost"); rst.innerHTML="↺ reset"; rst.addEventListener("click",()=>{delete state.swaps[key]; saveAll(); recompute();}); bar.appendChild(rst);}
         let pinPanel=null;
@@ -2594,16 +2603,18 @@ function renderToday(){
       const topRpe=topRow.querySelector(".lp"), topRep=topRow.querySelector(".lr");
       const t2=lp.querySelector('.top2[data-ex="'+xi+'"]');
       if(topRpe&&t2){
-        topRpe.addEventListener("change",()=>{
-          if(it.top2Used){ t2.classList.add("hidden"); return; }
+        const evalTop2=()=>{
+          if(it.top2Used){ t2.classList.add("hidden"); t2.innerHTML=""; return; }
           const got=+topRpe.value||0, tgt=it.targetRpe||8, cur=+topLl.value||0;
           if(!(got>0)||!(cur>0)||got>=tgt-0.5){ t2.classList.add("hidden"); t2.innerHTML=""; return; }
           const rm=revisedMaxFrom(cur,+topRep.value||it.reps,got);
-          if(!(rm>0)){ t2.classList.add("hidden"); return; }
+          if(!(rm>0)){ t2.classList.add("hidden"); t2.innerHTML=""; return; }
           let nxt=ZK.roundToPlates(pctForRepsRpe(+topRep.value||it.reps,tgt)*rm,kit().plates,kit().bar);
-          const ceil=ZK.roundToPlates((1+RPE_GUARD)*it.suggest,kit().plates,kit().bar);   // the ±10% guard applies to the FINAL attempt
+          // The ±10% guard is relative to the HEAVIER of the suggestion and what you actually put on the
+          // bar — working up past the suggestion must not silently suppress the offer.
+          const ceil=ZK.roundToPlates((1+RPE_GUARD)*Math.max(it.suggest||0,cur),kit().plates,kit().bar);
           if(nxt>ceil) nxt=ceil;
-          if(!(nxt>cur)){ t2.classList.add("hidden"); return; }
+          if(!(nxt>cur)){ t2.classList.add("hidden"); t2.innerHTML=""; return; }
           t2.classList.remove("hidden");
           t2.innerHTML='<span class="adjtxt">Top set came in at RPE '+got+', under the target of '+tgt
             +'. Take one more attempt at <b>'+nxt+' '+state.unit+'</b>? Back-offs will follow the better attempt.</span>';
@@ -2619,7 +2630,13 @@ function renderToday(){
           const no=el("button","adjbtn ghost","Keep it");
           no.addEventListener("click",()=>{ t2.classList.add("hidden"); t2.innerHTML=""; });
           t2.appendChild(go); t2.appendChild(no);
-        });
+        };
+        // Re-evaluate on every route the RPE can change: typing, committing, or ticking/unticking the set.
+        // A single "change" listener missed the common case of correcting an RPE after an accidental tick.
+        topRpe.addEventListener("change",evalTop2);
+        topRpe.addEventListener("input",evalTop2);
+        const topChk=topRow.querySelector(".setchk");
+        if(topChk) topChk.addEventListener("change",evalTop2);
       }
     });
     // ---- interactive checklist (ours): tick sets/exercises as completed. Each completion is the seam the rest timer hooks into. ----
@@ -2650,7 +2667,7 @@ function renderToday(){
       const alts=altsFor(it,day);
       if(!alts.length){ panel.innerHTML='<div class="swapnone">No alternatives for this slot.</div>'; return; }
       alts.forEach(a=>{ const ab=el("button","swapopt"); ab.innerHTML="<b>"+a.label+"</b><span>"+a.sub+"</span>"; ab.addEventListener("click",()=>{
-        state.swaps[b.index+"|"+di+"|"+xi]={type:a.type,id:a.id};
+        state.swaps[b.index+"|"+gw+"|"+di+"|"+xi]={type:a.type,id:a.id};
         applySwapToItem(it,a);                                   // mutate snap.day[xi] in place
         for(let i=0;i<_nsets(xi);i++) delete clk[_k(xi,i)];      // the exercise changed → clear its ticks
         if(typeof RestTimer!=="undefined") RestTimer.stop();
