@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- (ours) TODO: beginner-fork title/branding not decided yet — still using the parent app's "Daddy → Baddie" name as a placeholder -->
 <title>Daddy → Baddie</title>
 <style>
 :root{
@@ -12,6 +13,9 @@
   --copper1:#b9c9de; --copper2:#516883;
   --green:#3ee08f; --amber:#ffc457; --red:#ff6b6b;
   --squat:#ffc457; --bench:#ff6ec7; --deadlift:#a78bfa;
+  /* (ours) beginner-fork palette scaffold — unused placeholders aliased to the current palette so nothing
+     renders differently yet; naming/colors not finalized. */
+  --beginner-accent:var(--accent); --beginner-bg:var(--bg);
   --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
   --sans:-apple-system,"SF Pro Display","SF Pro Text",Inter,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
@@ -338,6 +342,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .wurow.checked .wul{color:var(--green)}
 .rpepx{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;line-height:1.5;margin-top:2px}
 .rpepx b{color:var(--text)}
+/* (ours) hard rep ceiling + form-break cue — same treatment as .rpepx, kept as separate classes so they
+   can be styled distinctly later (e.g. warn color) without touching the suggest-load line. */
+.rpecap{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
+.rpecap b{color:var(--text)}
+.rpeform{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
 .exbig .x{color:var(--faint)}
 .logrow.topset .logn{color:var(--accent);font-weight:800}
 .logrow.topset input.ll{border-color:var(--accent);font-weight:700}
@@ -474,6 +483,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .swapbtn{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px 9px;cursor:pointer;background:transparent}
 .swapbtn:hover{color:var(--accent);border-color:var(--accent)}
 .swapbtn.ghost{color:var(--faint)}
+/* (ours) standalone box-squat / sumo-deadlift control — cosmetic scaffold only: styling/color placeholder
+   for now aliased off the existing swap-button look, naming and final colors not decided yet. */
+.altliftbtn{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px 9px;cursor:pointer;background:transparent;margin-top:6px;display:inline-block}
+.altliftbtn:hover{color:var(--accent);border-color:var(--accent)}
+.altliftbtn.on{color:var(--accent);border-color:var(--accent)}
 .swappanel{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;flex-direction:column}
 .swappanel.hidden{display:none}
 .swapopt{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px;color:var(--text);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:8px 11px;cursor:pointer;font-family:inherit;text-align:left;justify-content:space-between}
@@ -512,43 +526,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .prwhen{font-family:var(--mono);font-size:9px;color:var(--faint)}
 .pre1{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:9px;padding-top:8px;border-top:1px solid var(--line)}
 .pre1 b{color:var(--text)}
-.gpprec{background:linear-gradient(180deg,rgba(40,217,242,.1),rgba(40,217,242,.03));border:1px solid rgba(40,217,242,.4);border-radius:10px;padding:11px 13px;margin-bottom:14px}
-.gpprecl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.gpprec b{color:var(--text);font-size:14px}
-.gppwhy{font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}
-.gppmodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:9px}
-.gppmode{font-family:var(--sans);font-weight:700;font-size:12px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:12px 8px;cursor:pointer}
-.gppmode.on{border-color:var(--accent);color:var(--accent);background:rgba(40,217,242,.1)}
-.gppdurs{display:flex;gap:8px}
-.gppdur{flex:1;font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:10px 6px;cursor:pointer}
-.gppdur.on{border-color:var(--accent);color:var(--accent)}
-.gpprounds{font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:11px}
-.gppblk{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:12px 0 6px}
-.gppitem{display:grid;grid-template-columns:20px 1fr auto 26px;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:6px;background:var(--surface2)}
-.gppitem.done{opacity:.45}
-.gppitem.done .gppnm{color:var(--green)}
-.gppchk{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;margin:0}
-.gppnm{font-size:13px;color:var(--text);display:flex;flex-direction:column;gap:2px}
-.gppnote{font-size:10px;color:var(--faint)}
-.gppdo{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
-.gppsw{background:transparent;border:1px solid var(--line);color:var(--faint);border-radius:5px;font-size:10px;padding:3px 5px;cursor:pointer;line-height:1}
-.gppsw:hover{border-color:var(--accent);color:var(--accent)}
-.gppswp{display:flex;flex-direction:column;gap:5px;margin:0 0 7px}
-.gppswp.hidden{display:none}
-.gppcardio{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
-.gppc{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px}
-.gppc b{color:var(--text);font-size:14px}
-.gppc span{font-size:10px;color:var(--faint);line-height:1.4}
-.gppc.on{border-color:var(--accent)}
-.gppc.on b{color:var(--accent)}
-.gppdose{font-size:12px;color:var(--muted);line-height:1.55;background:var(--surface2);border-radius:9px;padding:11px 12px}
-.gppdose b{color:var(--text)}
-.gppfoot{font-size:10px;color:var(--faint);line-height:1.55;margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}
-.gppdone{width:100%;font-family:var(--sans);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(180deg,#3ee3fb,#12b8dd);color:#052532;border:none;border-radius:11px;padding:14px;margin-top:14px;cursor:pointer}
-.gpphist{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
-.gphd{font-family:var(--mono);font-size:10px;color:var(--accent);min-width:96px}
-.gphl{color:var(--text)}
-.gphm{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto}
 .mvhd{display:grid;grid-template-columns:82px 1fr 30px 56px;gap:9px;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
 .mvhd .mvthis{text-align:right}.mvhd .mvavg{text-align:right}
 .mvrow{display:grid;grid-template-columns:82px 1fr 30px 56px;gap:9px;align-items:center;margin-bottom:7px}
@@ -635,13 +612,11 @@ footer{color:var(--faint);font-family:var(--mono);font-size:10px;text-align:cent
   
   <button id="t-sched" class="on">Schedule</button>
   <button id="t-today">Today</button>
-  <button id="t-gpp">GPP</button>
   <button id="t-progress">Progress</button>
 </div>
 <div id="today" class="hidden"></div>
 <div id="progress" class="hidden"></div>
 <div id="schedule"></div>
-<div id="gpp" class="hidden"></div>
 
 <footer>built to learn — not medical or coaching advice</footer>
 </div>
@@ -1844,10 +1819,10 @@ var _ZK = (() => {
 const $=s=>document.querySelector(s), el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
 const lifts=["squat","bench","deadlift"];
 const PCOL={45:"#3a6fc4",35:"#d4a72c",25:"#35a05e",20:"#3a6fc4",15:"#d4a72c",10:"#4a5468",5:"#c4453a",2.5:"#7c8798",1.25:"#95a1b3"};
-const state={plan:null,maxes:{},unit:"lb",profile:{},cycle:{},log:[],swaps:{},pins:{},bands:[],deloadWeek:null,autoReg:{},autoRegOn:true,autoRegLast:null,handoffDismissed:null,storeOK:true};
+const state={plan:null,maxes:{},unit:"lb",profile:{},cycle:{},log:[],swaps:{},pins:{},altLift:{},bands:[],deloadWeek:null,autoReg:{},autoRegOn:true,autoRegLast:null,handoffDismissed:null,storeOK:true};
 const STORE="zk_v1", LBKG=2.2046226;
 function loadStore(){try{const r=localStorage.getItem(STORE);return r?JSON.parse(r):null;}catch(e){state.storeOK=false;return null;}}
-function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,gpp:state.gpp,gppLog:state.gppLog,warmupSwaps:state.warmupSwaps,potOpt:state.potOpt,potBySession:state.potBySession,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:{status:$("#status").value,planby:$("#planby").value,days:$("#days").value,weeks:$("#weeks").value,test:$("#test").value,compdate:$("#compdate").value,unit:$("#unit").value,speed:$("#speed").value,freq:$("#freq").value,autoreg:$("#autoreg")?$("#autoreg").value:"on",rpemode:$("#rpemode")?$("#rpemode").value:"on",ohpmode:$("#ohpmode")?$("#ohpmode").value:"off",ohp:$("#ohp")?$("#ohp").value:"115",squat:$("#squat").value,bench:$("#bench").value,deadlift:$("#deadlift").value}}));}catch(e){state.storeOK=false;}}
+function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,altLift:state.altLift,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,warmupSwaps:state.warmupSwaps,potOpt:state.potOpt,potBySession:state.potBySession,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:{status:$("#status").value,planby:$("#planby").value,days:$("#days").value,weeks:$("#weeks").value,test:$("#test").value,compdate:$("#compdate").value,unit:$("#unit").value,speed:$("#speed").value,freq:$("#freq").value,autoreg:$("#autoreg")?$("#autoreg").value:"on",rpemode:$("#rpemode")?$("#rpemode").value:"on",ohpmode:$("#ohpmode")?$("#ohpmode").value:"off",ohp:$("#ohp")?$("#ohp").value:"115",squat:$("#squat").value,bench:$("#bench").value,deadlift:$("#deadlift").value}}));}catch(e){state.storeOK=false;}}
 // ---- dual rest timer (ours): fixed bottom bar; auto-started on set/exercise completion; +15/-15 cumulative; skip ----
 const RestTimer=(function(){
   let remaining=0, iv=null, kind="set", bar=null, actx=null;
@@ -2074,15 +2049,22 @@ const ZONE_TARGET_RPE={VH:9.5,H:8,M:7.5,L:7,VL:6.5,P:6,D1:8.5,D2:7.5,D3:7};     
 // all block. Last week of the block — and any realization/peaking week — goes to the ceiling.
 function topSetRpeFor(zone,wib,lengthWk,phase){
   const ceil=ZONE_TARGET_RPE[zone]||8;
-  if(phase==="realizational") return ceil;                  // peaking: express it
+  if(phase==="realizational") return 8;                     // (ours) conservative beginner cap — flat RPE 8, not the zone ceiling (was 9.5); not sourced from Z&K or NSCA
   const last=(lengthWk||1)-1;
-  if(wib>=last) return ceil;                                // final week of the block
-  if(lengthWk>=3&&wib===last-1) return Math.min(ceil,9);     // penultimate week
-  return Math.min(ceil,8);                                  // repeatable working effort
+  if(wib>=last) return Math.min(ceil,8);                    // (ours) final week of the block — capped at 8 (was ceil, i.e. up to 9.5)
+  if(lengthWk>=3&&wib===last-1) return Math.min(ceil,8);     // (ours) penultimate week — capped at 8 (was min(ceil,9))
+  return Math.min(ceil,7);                                  // (ours) repeatable working effort — 7->8 ramp across the block (was min(ceil,8), i.e. 8->9)
 }
 const BACKOFF_PCT=0.80;                                                        // back-offs at 80% of the top set (ours) — same reps as the top set, so this is deliberately light: bar speed and technique under fatigue rather than added stimulus
 const ACC_TARGET_RPE={accessory:"7\u20138",core:"8\u20139"};                   // (ours) tier-based accessory RPE targets — not from Z&K
 const RPE_GUARD=0.10;                                                          // top set may drift ±10% from the suggestion before we flag it (ours)
+// (ours) standalone box-squat / sumo-deadlift swap — a small explicit control scoped to just these two
+// cards. Deliberately independent of the general swap engine (ZK.MAIN_MOVEMENTS/altsFor/applySwapToItem
+// below) and the dead EXERCISES array — do not wire this into either.
+const ALT_LIFT_SCOPE={
+  squat:{name:"Box squat",cue:"Sit back to a parallel box, pause, drive up — teaches the hips.",loadFactor:0.9},
+  deadlift:{name:"Sumo deadlift",cue:"Wide stance, toes out; sit straight down between the knees, drive through the floor.",loadFactor:0.9}
+};
 function rpeModeOn(){ const e=$("#rpemode"); return e?e.value==="on":true; }
 // heavy phases only, per design: accumulation keeps fixed percentages so volume work stays predictable.
 // Readiness is fully advisory here (including red) — the top set self-adjusts, and the ±10% guardrail is the safety net.
@@ -2268,6 +2250,10 @@ function renderToday(){
       it.suggest=it.load;                                   // engine load = the starting suggestion
       it.backoffSets=Math.max(0,it.sets-1);
       it.backoffPct=BACKOFF_PCT;
+      // (ours) hard rep ceiling — self-reported RPE is unreliable for beginners, so the top set gets an
+      // absolute stop independent of how the RPE feels. Buffer sits one rep inside the nominal RPE->RIR
+      // failure point (RPE7~3RIR, RPE8~2RIR) so a miscalibrated RPE still can't run past a safe rep count.
+      it.repCeiling=parseInt(it.reps,10)+(it.targetRpe<=7?2:1);
     }); }
     // (ours) Optional overhead press. It is NOT a competition lift, so it stays out of meet attempts,
     // the SBD total and the ratio math — it rides as a trained secondary on the bench day, loaded off
@@ -2294,6 +2280,15 @@ function renderToday(){
       const ov=state.swaps[`${b.index}|${gw}|${di}|${idx}`]||state.swaps[`${b.index}|${di}|${idx}`]; if(!ov) return;
       if(ov.type==="main"&&it.group==="main"){const mv=ZK.MAIN_MOVEMENTS.find(m=>m.id===ov.id); if(mv){it.name=mv.name;it.cue=mv.cue;it.swapped=true;it.load=ZK.roundToPlates(ZK.ZONE_PCT[it.zone]*effMaxOf(it.lift)*mv.loadFactor,kit().plates,kit().bar);}}
       else if(ov.type==="acc"&&(it.group==="accessory"||it.group==="core")){const ac=ZK.ACCESSORIES.find(a=>a.id===ov.id); if(ac){it.name=ac.name;it.sets=ac.sets;it.reps=ac.reps;it.rest=ac.restSec+"s";it.cue=ac.cue;it.swapped=true;}}
+    });
+    // (ours) standalone box-squat / sumo-deadlift swap — separate state bucket (state.altLift), separate
+    // from state.swaps above. Scoped to exactly the two lifts in ALT_LIFT_SCOPE; does not touch the
+    // general swap engine.
+    day.forEach((it,idx)=>{
+      const alt=it.group==="main"?ALT_LIFT_SCOPE[it.lift]:null; if(!alt) return;
+      if(!state.altLift[`${b.index}|${gw}|${di}|${idx}`]) return;
+      it.name=alt.name; it.cue=alt.cue; it.swapped=true;
+      if(it.zone!=null) it.load=ZK.roundToPlates(ZK.ZONE_PCT[it.zone]*effMaxOf(it.lift)*alt.loadFactor,kit().plates,kit().bar);
     });
     // Once a session has been logged, its exercises are fixed: re-render them from what was recorded,
     // not from the current template. Otherwise editing this week's plan rewrites the exercise names on
@@ -2368,7 +2363,11 @@ function renderToday(){
       if(e.load!=null) big+=`<span class="exat">@ ${e.load}<span class="u">${state.unit}</span></span>`;
       main.innerHTML=big+`</div>`;
       if(e.rpeMode){ main.innerHTML=`<div class="exbig">${e.reps}<span class="x">@</span>RPE ${e.targetRpe}</div>`
-        +`<div class="rpepx">top set \u00b7 suggest <b>${e.suggest} ${state.unit}</b>${e.backoffSets?` \u00b7 then ${e.backoffSets}\u00d7${e.reps} @ ${Math.round(e.backoffPct*100)}% of it`:""}</div>` }
+        +`<div class="rpepx">top set \u00b7 suggest <b>${e.suggest} ${state.unit}</b>${e.backoffSets?` \u00b7 then ${e.backoffSets}\u00d7${e.reps} @ ${Math.round(e.backoffPct*100)}% of it`:""}</div>`
+        // (ours) hard rep ceiling + form-break cue \u2014 informational only, no enforcement. Scoped to the
+        // top set only (this block doesn't run for back-off sets, which aren't RPE-self-assessed).
+        +`<div class="rpecap">hard stop: <b>${e.repCeiling} reps</b>, regardless of how the RPE feels</div>`
+        +`<div class="rpeform">stop the set if bar speed slows or form breaks down</div>` }
       if(e.load!=null) main.appendChild(plateBar(e.load));
       card.appendChild(main);
       if(e.group==="main"&&e.load!=null){ const wu=warmupRamp(e.load);
@@ -2381,6 +2380,14 @@ function renderToday(){
       card.appendChild(el("div","exmeta",meta));
       if(e.pinned&&e.advisedLoad!=null){const adv=Math.round(e.advisedLoad),pl=Math.round(e.load); if(adv!==pl){const heavier=pl>adv&&band!=="green"; card.appendChild(el("div","pinadvice"+(heavier?" warn":""),`\ud83d\udccc holding ${pl} ${state.unit} \u00b7 readiness-advised ~${adv} ${state.unit}`+(heavier?" \u2014 heavier than today's readiness suggests":"")));}}
       if(e.cue) card.appendChild(el("div","excue",e.cue));
+      if(e.group==="main"&&ALT_LIFT_SCOPE[e.lift]){
+        // (ours) standalone box-squat / sumo-deadlift control — see ALT_LIFT_SCOPE above.
+        const altKey=`${b.index}|${gw}|${di}|${idx}`, altOn=!!state.altLift[altKey], alt=ALT_LIFT_SCOPE[e.lift];
+        const altBtn=el("button","altliftbtn"+(altOn?" on":""));
+        altBtn.textContent=altOn?`↺ back to ${e.lift==="squat"?"back squat":"conventional deadlift"}`:`⇄ try ${alt.name.toLowerCase()}`;
+        altBtn.addEventListener("click",()=>{ state.altLift[altKey]=!altOn; saveAll(); recompute(); });
+        card.appendChild(altBtn);
+      }
       if(e.group==="main"||e.group==="accessory"||e.group==="core"){
         const key=`${b.index}|${gw}|${di}|${idx}`;
         const bar=el("div","swapbar"); const btn=el("button","swapbtn"); btn.innerHTML="⇄ swap"; bar.appendChild(btn);
@@ -2909,170 +2916,6 @@ function prsFor(lift,logs){
   return {buckets:buckets,bestE1rm:bestE?{load:Math.round(bestE.e),from:Math.round(bestE.set.load)+"\u00d7"+bestE.set.reps+" @ RPE "+bestE.set.rpe,ts:bestE.set.ts}:null,
           totalSets:totalSets,heaviest:Math.round(heaviest)};
 }
-// ---- GPP (ours) ----------------------------------------------------------------
-// Off-day work for a powerlifter: aid recovery, build work capacity, keep general fitness — WITHOUT
-// competing with the lifting. Everything here is deliberately sub-maximal and time-capped; the failure
-// mode for GPP is doing enough to leave you flat for a heavy day. Z&K discusses general preparation as
-// a phase concept, not as a session menu, so the specific selections and doses here are OURS.
-// Equipment modelled: kettlebell pairs 20/25/30/35/40 lb, a single 53, sandbags 50 and 75 lb, dumbbells.
-// (No sled yet — SLED items are held back until the kit exists.)
-const GPP_KB="kettlebell", GPP_SB="sandbag", GPP_DB="dumbbell", GPP_BW="bodyweight";
-const GPP_POOL={
-  carry:[
-    {id:"kb_farmer",name:"KB farmer's carry",kit:GPP_KB,dose:"4 \u00d7 40 m",note:"pair, tall posture"},
-    {id:"kb_suitcase",name:"KB suitcase carry (53)",kit:GPP_KB,dose:"4 \u00d7 30 m / side",note:"resist the side-bend"},
-    {id:"kb_frontrack",name:"Double KB front-rack carry",kit:GPP_KB,dose:"4 \u00d7 30 m",note:"ribs down, breathe"},
-    {id:"kb_oh_carry",name:"Single-arm overhead KB carry",kit:GPP_KB,dose:"3 \u00d7 25 m / side",note:"lighter bell, locked elbow"},
-    {id:"sb_bearhug",name:"Sandbag bear-hug carry",kit:GPP_SB,dose:"4 \u00d7 30 m",note:"50 lb to start"},
-    {id:"sb_shoulder",name:"Sandbag shoulder carry",kit:GPP_SB,dose:"4 \u00d7 25 m / side",note:"alternate shoulders"},
-    {id:"kb_waiter",name:"Waiter walk",kit:GPP_KB,dose:"3 \u00d7 25 m / side",note:"bell overhead, palm up"},
-    {id:"db_farmer",name:"DB farmer's carry",kit:GPP_DB,dose:"4 \u00d7 40 m",note:"heaviest pair you have"},
-  ],
-  circuit:[
-    {id:"kb_swing",name:"KB swing",kit:GPP_KB,dose:"12\u201315",note:"hips, not arms \u2014 stop well short of failure"},
-    {id:"kb_goblet_sq",name:"Goblet squat",kit:GPP_KB,dose:"10",note:"light \u2014 this is not leg training"},
-    {id:"kb_rdl",name:"Single-leg KB RDL",kit:GPP_KB,dose:"8 / side",note:"balance and hamstring, low load"},
-    {id:"kb_press",name:"KB strict press",kit:GPP_KB,dose:"8 / side",note:""},
-    {id:"kb_row",name:"KB bent row",kit:GPP_KB,dose:"10 / side",note:""},
-    {id:"kb_clean",name:"KB clean",kit:GPP_KB,dose:"8 / side",note:"soft catch"},
-    {id:"kb_halo",name:"KB halo",kit:GPP_KB,dose:"6 each way",note:"shoulder prep"},
-    {id:"sb_clean",name:"Sandbag clean to shoulder",kit:GPP_SB,dose:"6",note:"50 lb, smooth"},
-    {id:"sb_squat",name:"Sandbag bear-hug squat",kit:GPP_SB,dose:"10",note:""},
-    {id:"sb_gm",name:"Sandbag good morning",kit:GPP_SB,dose:"10",note:"light, controlled"},
-    {id:"sb_rotate",name:"Sandbag rotational toss/pivot",kit:GPP_SB,dose:"6 / side",note:"trunk, not speed"},
-    {id:"db_pushup_row",name:"Push-up to DB row",kit:GPP_DB,dose:"8 / side",note:""},
-    {id:"bw_pushup",name:"Push-up",kit:GPP_BW,dose:"12\u201315",note:""},
-    {id:"bw_reverse_lunge",name:"Reverse lunge",kit:GPP_BW,dose:"10 / side",note:"bodyweight or light KB"},
-    {id:"bw_deadbug",name:"Dead bug",kit:GPP_BW,dose:"8 / side",note:"ribs down"},
-    {id:"bw_plank",name:"Plank",kit:GPP_BW,dose:"40 s",note:""},
-  ],
-  mobility:[
-    {id:"kb_armbar",name:"KB arm bar",kit:GPP_KB,dose:"45 s / side",note:"light bell, shoulder + t-spine"},
-    {id:"kb_windmill",name:"KB windmill",kit:GPP_KB,dose:"6 / side",note:"light, hips and t-spine"},
-    {id:"kb_goblet_hold",name:"Goblet squat hold + pry",kit:GPP_KB,dose:"60 s",note:"open the hips at the bottom"},
-    {id:"kb_halo_mob",name:"KB halo",kit:GPP_KB,dose:"8 each way",note:""},
-    {id:"kb_tgu",name:"Turkish get-up (partial)",kit:GPP_KB,dose:"3 / side",note:"to elbow or hand, light"},
-    {id:"bw_90_90",name:"90/90 hip switch",kit:GPP_BW,dose:"8 / side",note:""},
-    {id:"bw_cat_cow",name:"Cat-cow",kit:GPP_BW,dose:"10",note:""},
-    {id:"bw_worlds_greatest",name:"World's greatest stretch",kit:GPP_BW,dose:"5 / side",note:""},
-    {id:"bw_couch",name:"Couch stretch",kit:GPP_BW,dose:"45 s / side",note:"hip flexors after squat days"},
-    {id:"bw_tspine",name:"T-spine rotation",kit:GPP_BW,dose:"8 / side",note:""},
-    {id:"sb_drag",name:"Sandbag drag / reposition",kit:GPP_SB,dose:"3 \u00d7 20 m",note:"easy pace, blood flow"},
-  ],
-};
-const GPP_CARDIO=[
-  {id:"cycle",name:"Cycling",dose:"conversational pace",note:"lowest-impact option \u2014 kind to legs after squats"},
-  {id:"jog",name:"Jogging",dose:"conversational pace",note:"keep it easy; hard running competes with lifting"},
-];
-const GPP_DUR=[15,25,40];
-function gppItemsFor(mode,mins){
-  const n=mins<=15?4:mins<=25?6:8;
-  if(mode==="carry") return {blocks:[{label:"Carries",items:pickN(GPP_POOL.carry,Math.min(n,GPP_POOL.carry.length),mode+mins)}],rounds:mins<=15?2:mins<=25?3:4};
-  if(mode==="mobility") return {blocks:[{label:"Mobility",items:pickN(GPP_POOL.mobility,n,mode+mins)}],rounds:mins<=15?2:2};
-  // circuits always carry something — carries are the highest-value GPP for a lifter and shouldn't be siloed
-  const nCarry=mins<=15?1:2, nWork=Math.max(3,n-nCarry);
-  return {blocks:[{label:"Circuit",items:pickN(GPP_POOL.circuit,nWork,mode+mins)},
-                  {label:"Carry finisher",items:pickN(GPP_POOL.carry,nCarry,mode+mins+"c")}],
-          rounds:mins<=15?2:mins<=25?3:4};
-}
-function pickN(pool,n,seedKey){                       // rotate deterministically so it varies day to day, not at random
-  const seed=(state.gppSeed||0)+String(seedKey).split("").reduce((a,c)=>a+c.charCodeAt(0),0);
-  const out=[]; const used=new Set();
-  for(let i=0;i<n&&i<pool.length;i++){ let k=(seed+i*7)%pool.length; while(used.has(k)) k=(k+1)%pool.length; used.add(k); out.push(pool[k]); }
-  return out;
-}
-function gppRecommend(){
-  // (ours) context-aware suggestion — ignorable. Yesterday's training and today's readiness matter most.
-  const logs=state.log||[]; const now=Date.now();
-  const recent=logs.filter(s=>now-s.ts<36*3600000);
-  const band=(state.readinessNow||{}).band||"green";
-  const heavyYesterday=recent.some(s=>s.method==="ME"||(s.reps<=5&&s.rpe>=8));
-  const legsYesterday=recent.some(s=>s.lift==="squat"||s.lift==="deadlift");
-  if(band==="red") return {mode:"mobility",mins:15,why:"Readiness is red \u2014 keep today genuinely easy."};
-  if(heavyYesterday&&legsYesterday) return {mode:"cardio",mins:25,why:"Heavy lower-body work yesterday \u2014 easy cycling moves blood without adding leg fatigue."};
-  if(heavyYesterday) return {mode:"mobility",mins:25,why:"Heavy session yesterday \u2014 mobility and light carries over anything demanding."};
-  if(band==="amber") return {mode:"cardio",mins:25,why:"Readiness is amber \u2014 steady cardio is the low-cost option."};
-  return {mode:"circuit",mins:25,why:"You're recovered \u2014 a good day to build work capacity."};
-}
-function renderGpp(){
-  const root=$("#gpp"); if(!root) return; root.innerHTML="";
-  state.gpp=state.gpp||{}; state.gppLog=state.gppLog||[];
-  const rec=gppRecommend();
-  const mode=state.gpp.mode||rec.mode, mins=state.gpp.mins||rec.mins;
-  const MODES=[["cardio","Cardio"],["circuit","Circuit"],["carry","Loaded carries"],["mobility","Mobility"]];
-
-  const hd=el("div","panel");
-  hd.innerHTML='<h2>Off-day work</h2><div class="body">'
-    +'<div class="gpprec"><span class="gpprecl">Suggested</span> <b>'+(MODES.find(m=>m[0]===rec.mode)||[,rec.mode])[1]+' \u00b7 '+rec.mins+' min</b><div class="gppwhy">'+rec.why+' \u2014 pick anything you like instead.</div></div>'
-    +'<div class="gppmodes">'+MODES.map(m=>'<button class="gppmode'+(m[0]===mode?" on":"")+'" data-mode="'+m[0]+'">'+m[1]+'</button>').join("")+'</div>'
-    +'<div class="gppdurs">'+GPP_DUR.map(d=>'<button class="gppdur'+(d===mins?" on":"")+'" data-min="'+d+'">'+d+' min</button>').join("")+'</div>'
-    +'</div>';
-  root.appendChild(hd);
-  hd.querySelectorAll(".gppmode").forEach(b=>b.addEventListener("click",()=>{ state.gpp.mode=b.getAttribute("data-mode"); saveAll(); renderGpp(); }));
-  hd.querySelectorAll(".gppdur").forEach(b=>b.addEventListener("click",()=>{ state.gpp.mins=+b.getAttribute("data-min"); saveAll(); renderGpp(); }));
-
-  const body=el("div","panel");
-  let h='<h2>'+(MODES.find(m=>m[0]===mode)||[,mode])[1]+' \u00b7 '+mins+' min</h2><div class="body">';
-  if(mode==="cardio"){
-    const opts=GPP_CARDIO;
-    const pickId=state.gpp.cardio||opts[0].id;
-    h+='<div class="gppcardio">'+opts.map(o=>'<button class="gppc'+(o.id===pickId?" on":"")+'" data-c="'+o.id+'"><b>'+o.name+'</b><span>'+o.note+'</span></button>').join("")+'</div>';
-    h+='<div class="gppdose">'+mins+' minutes at a <b>conversational pace</b> \u2014 you should be able to talk in full sentences. If you are breathing hard, it has stopped being recovery work.</div>';
-  } else {
-    const plan=gppItemsFor(mode,mins);
-    h+='<div class="gpprounds">'+plan.rounds+' rounds \u00b7 move steadily, rest as needed \u2014 leave 3\u20134 reps in reserve on everything</div>';
-    plan.blocks.forEach((blk,bi)=>{
-      h+='<div class="gppblk">'+blk.label+'</div>';
-      blk.items.forEach((it,ii)=>{
-        const key=bi+":"+ii;
-        const cur=(state.gpp.swaps&&state.gpp.swaps[mode+mins+key])||null;
-        const item=cur?(GPP_POOL[blk.label==="Carry finisher"?"carry":(mode==="mobility"?"mobility":mode==="carry"?"carry":"circuit")].find(x=>x.id===cur)||it):it;
-        h+='<div class="gppitem" data-k="'+key+'" data-pool="'+(blk.label==="Carry finisher"?"carry":(mode==="mobility"?"mobility":mode==="carry"?"carry":"circuit"))+'">'
-          +'<input type="checkbox" class="gppchk">'
-          +'<span class="gppnm">'+item.name+(item.note?'<span class="gppnote">'+item.note+'</span>':"")+'</span>'
-          +'<span class="gppdo">'+item.dose+'</span>'
-          +'<button class="gppsw" type="button" title="swap">\u21c4</button></div>'
-          +'<div class="gppswp hidden" data-k="'+key+'"></div>';
-      });
-    });
-  }
-  h+='<button class="gppdone" type="button">Log '+mins+' min '+(MODES.find(m=>m[0]===mode)||[,mode])[1].toLowerCase()+'</button>';
-  h+='</div>';
-  body.innerHTML=h; root.appendChild(body);
-
-  body.querySelectorAll(".gppc").forEach(b=>b.addEventListener("click",()=>{ state.gpp.cardio=b.getAttribute("data-c"); saveAll(); renderGpp(); }));
-  body.querySelectorAll(".gppitem").forEach(row=>{
-    const chk=row.querySelector(".gppchk");
-    chk.addEventListener("change",()=>row.classList.toggle("done",chk.checked));
-    row.querySelector(".gppsw").addEventListener("click",()=>{
-      const k=row.getAttribute("data-k"), poolName=row.getAttribute("data-pool");
-      const panel=body.querySelector('.gppswp[data-k="'+k+'"]'); if(!panel) return;
-      if(!panel.classList.contains("hidden")){ panel.classList.add("hidden"); panel.innerHTML=""; return; }
-      panel.classList.remove("hidden"); panel.innerHTML="";
-      const shown=[...body.querySelectorAll(".gppnm")].map(x=>x.childNodes[0].nodeValue.trim());
-      GPP_POOL[poolName].filter(o=>!shown.includes(o.name)).forEach(o=>{
-        const b2=el("button","swapopt"); b2.innerHTML="<b>"+o.name+"</b><span>"+o.dose+"</span>";
-        b2.addEventListener("click",()=>{ state.gpp.swaps=state.gpp.swaps||{}; state.gpp.swaps[mode+mins+k]=o.id; saveAll(); renderGpp(); });
-        panel.appendChild(b2);
-      });
-    });
-  });
-  body.querySelector(".gppdone").addEventListener("click",()=>{
-    const label=(MODES.find(m=>m[0]===mode)||[,mode])[1];
-    state.gppLog.push({mode:mode,label:label,mins:mins,ts:Date.now(),detail:mode==="cardio"?((GPP_CARDIO.find(c=>c.id===(state.gpp.cardio||GPP_CARDIO[0].id))||{}).name||""):""});
-    saveAll(); renderGpp();
-  });
-
-  const recent=(state.gppLog||[]).slice(-8).reverse();
-  if(recent.length){
-    const hist=el("div","panel");
-    hist.innerHTML='<h2>Recent off-day work</h2><div class="body">'
-      +recent.map(g=>'<div class="gpphist"><span class="gphd">'+new Date(g.ts).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})+'</span>'
-        +'<span class="gphl">'+g.label+(g.detail?" \u00b7 "+g.detail:"")+'</span><span class="gphm">'+g.mins+' min</span></div>').join("")
-      ;
-    root.appendChild(hist);
-  }
-}
 function volumeDonut(vol){
   const total=(vol.squat+vol.bench+vol.deadlift+vol.accessories)||1;
   const segs=[["squat",vol.squat,"var(--squat)"],["bench",vol.bench,"var(--bench)"],["deadlift",vol.deadlift,"var(--deadlift)"],["accessories",vol.accessories,"#5a6d88"]];
@@ -3547,12 +3390,11 @@ function renderSchedule(){
 }
 function showTab(t){
   if(state.exitLog) state.exitLog();
-  [["today","#t-today","#today"],["progress","#t-progress","#progress"],["sched","#t-sched","#schedule"],["gpp","#t-gpp","#gpp"]].forEach(([n,btn,pane])=>{
+  [["today","#t-today","#today"],["progress","#t-progress","#progress"],["sched","#t-sched","#schedule"]].forEach(([n,btn,pane])=>{
     $(btn).classList.toggle("on",n===t); $(pane).classList.toggle("hidden",n!==t);
   });
   if(t==="progress") renderProgress();
   if(t==="sched") renderSchedule();
-  if(t==="gpp") renderGpp();
   mountReadiness();
 }
 function openDay(bi,wib,di){ const tb=$("#tblock"); if(!tb) return; tb.value=String(bi); if(typeof populateWeeks==="function") populateWeeks();
@@ -3561,7 +3403,6 @@ function openDay(bi,wib,di){ const tb=$("#tblock"); if(!tb) return; tb.value=Str
 $("#t-today").addEventListener("click",()=>showTab("today"));
 $("#t-progress").addEventListener("click",()=>showTab("progress"));
 $("#t-sched").addEventListener("click",()=>showTab("sched"));
-$("#t-gpp")&&$("#t-gpp").addEventListener("click",()=>showTab("gpp"));
 $("#setuptoggle")&&$("#setuptoggle").addEventListener("click",()=>$("#setup").classList.toggle("collapsed"));
 document.querySelectorAll("#wdpick button").forEach(b=>b.addEventListener("click",()=>{ b.classList.toggle("on"); generate(); }));
 (function init(){
@@ -3572,6 +3413,7 @@ document.querySelectorAll("#wdpick button").forEach(b=>b.addEventListener("click
     if(Array.isArray(sv.log)) state.log=sv.log;
     if(sv.swaps) state.swaps=sv.swaps;
     if(sv.pins) state.pins=sv.pins;
+    if(sv.altLift) state.altLift=sv.altLift;
     if(Array.isArray(sv.bands)) state.bands=sv.bands;
     if(typeof sv.deloadWeek!=="undefined") state.deloadWeek=sv.deloadWeek;
     if(sv.autoReg) state.autoReg=sv.autoReg;
@@ -3582,8 +3424,6 @@ document.querySelectorAll("#wdpick button").forEach(b=>b.addEventListener("click
     if(sv.phaseOverride) state.phaseOverride=sv.phaseOverride;
     if(sv.rebaseSeen) state.rebaseSeen=sv.rebaseSeen;
     if(sv.notes) state.notes=sv.notes;
-    if(sv.gpp) state.gpp=sv.gpp;
-    if(sv.gppLog) state.gppLog=sv.gppLog;
     if(sv.warmupSwaps) state.warmupSwaps=sv.warmupSwaps;
     if(sv.potOpt) state.potOpt=sv.potOpt;
     if(sv.potBySession) state.potBySession=sv.potBySession;
