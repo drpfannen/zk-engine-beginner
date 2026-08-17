@@ -589,12 +589,9 @@ footer{color:var(--faint);font-family:var(--mono);font-size:10px;text-align:cent
       <div class="field"><label>Test week</label><input id="test" type="number" value="16" min="0" max="20"></div>
       <div class="field"><label>Competition date</label><input id="compdate" type="date"></div>
       <div class="field"><label>Units</label><select id="unit"><option value="lb" selected>lb</option><option value="kg">kg</option></select></div>
-      <div class="field"><label>Speed work</label><select id="speed"><option value="off" selected>off</option><option value="before">on · before main</option><option value="after">on · after main</option></select></div>
       <div class="field"><label>Extra days favor</label><select id="freq"><option value="bench" selected>bench</option><option value="squat">squat</option><option value="deadlift">deadlift</option></select></div>
       <div class="field"><label>Autoregulate maxes</label><select id="autoreg"><option value="on" selected>on</option><option value="off">off</option></select></div>
       <div class="field"><label>Top set @ RPE (heavy)</label><select id="rpemode"><option value="on" selected>on</option><option value="off">off</option></select></div>
-      <div class="field"><label>Overhead press</label><select id="ohpmode"><option value="off" selected>off</option><option value="on">train it</option></select></div>
-      <div class="field"><label>OHP max</label><input id="ohp" type="number" value="115"></div>
     </div>
     <div class="wdrow"><label class="wdlbl">Training days — pick the weekdays you train</label><div class="wdpick" id="wdpick"><button data-d="0" class="on">Mon</button><button data-d="1">Tue</button><button data-d="2" class="on">Wed</button><button data-d="3">Thu</button><button data-d="4" class="on">Fri</button><button data-d="5">Sat</button><button data-d="6">Sun</button></div></div>
     <div class="maxes">
@@ -1166,7 +1163,6 @@ var _ZK = (() => {
     // bench emphasis
     { id: "cgbp", name: "Close-grip bench press", tier: "B", emphasis: ["bench"], muscles: ["triceps", "chest"], equipment: ["barbell", "bench"], sets: 3, reps: "8", restSec: 120, cue: "Shoulder-width grip, elbows tucked; bar to the lower sternum." },
     { id: "incline_db", name: "Incline DB press", tier: "B", emphasis: ["bench"], muscles: ["chest", "delts"], equipment: ["dumbbell", "bench"], sets: 3, reps: "10", restSec: 90, cue: "30\xB0 incline; full stretch at the bottom, don't clack the DBs at the top." },
-    { id: "lateral_raise", name: "DB lateral raise", tier: "C", emphasis: ["ohp"], muscles: ["delts"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Lead with the elbows; slow and strict, no swing." },
     // deadlift emphasis
     { id: "rdl", name: "Romanian deadlift", tier: "B", emphasis: ["deadlift"], muscles: ["hamstrings", "glutes"], equipment: ["barbell"], sets: 3, reps: "8", restSec: 120, cue: "Push the hips back with soft knees; feel the hamstring stretch, bar close to the legs." },
     { id: "bb_row", name: "Barbell row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "erectors"], equipment: ["barbell"], sets: 3, reps: "8", restSec: 90, cue: "Flat back ~45\xB0; row to the lower chest, control the eccentric." },
@@ -1210,13 +1206,10 @@ var _ZK = (() => {
     { id: "barbell_bent_over_row", name: "Barbell Bent Over Row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "erectors", "biceps"], equipment: ["barbell"], sets: 3, reps: "8", restSec: 90, cue: "Closed pronated grip wider than shoulder-width. Flex forward at the hips until the torso is nearly parallel to the floor with the knees slightly flexed; pull the shoulders back and push the chest out for a neutral, not rounded, back \u2014 don't crane up at the ceiling.", source: "sourced" },
     { id: "barbell_bent_over_shrug", name: "Barbell Bent Over Shrug", tier: "C", emphasis: ["deadlift"], muscles: ["traps", "upper_back"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 60, cue: "Bent-over position, straight arms; shrug the shoulder blades together, no arm bend.", source: "corroborated" },
     { id: "barbell_curl", name: "Barbell Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["brachialis", "biceps", "brachioradialis"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 45, cue: "Elbows at the sides; curl without leaning back to cheat the weight up.", source: "sourced" },
-    { id: "barbell_facepull", name: "Barbell Facepull", tier: "B", emphasis: ["ohp"], muscles: ["rear_delts", "upper_back"], equipment: ["barbell"], sets: 3, reps: "15", restSec: 45, cue: "Stand facing a high pulley, closed pronated grip with palms down, arms extended in front of the face and elbows pointing out to the sides. Step back for cable tension, head in line with the spine. Once the upper arms reach the frontal plane, externally rotate and pull the clasp toward the face.", source: "sourced" },
     { id: "barbell_overhead_tricep_extension", name: "Barbell Overhead Tricep Extension", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 60, cue: "Elbows pointed forward and fixed; lower behind the head, extend fully.", source: "sourced" },
-    { id: "barbell_upright_row", name: "Barbell Upright Row", tier: "B", emphasis: ["ohp"], muscles: ["delts", "traps", "serratus_anterior", "biceps", "forearms"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 60, cue: "Pull to sternum height, elbows leading; stop before the shoulder impingement range.", source: "sourced" },
     { id: "bent_knee_sit_up", name: "Bent-Knee Sit-Up", tier: "C", emphasis: ["squat", "deadlift"], muscles: ["rectus_abdominis", "hip_flexors"], equipment: ["bodyweight"], sets: 3, reps: "15", restSec: 45, cue: "Knees bent, feet anchored; curl up through the trunk to sitting, control the descent.", source: "inferred" },
     { id: "bent_over_row", name: "Bent-Over Row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "erectors", "biceps"], equipment: ["barbell"], sets: 3, reps: "8", restSec: 90, cue: "Torso nearly parallel to the floor, knees slightly flexed; shoulders back and chest out to hold a neutral back, then row without rounding.", source: "sourced" },
     { id: "cable_curl", name: "Cable Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["brachialis", "biceps", "brachioradialis"], equipment: ["cable"], sets: 3, reps: "12", restSec: 45, cue: "Elbows pinned to the sides; curl through a full range without swinging.", source: "sourced" },
-    { id: "cable_facepull", name: "Cable Facepull", tier: "B", emphasis: ["ohp"], muscles: ["rear_delts", "upper_back"], equipment: ["cable"], sets: 3, reps: "15", restSec: 45, cue: "Stand facing a high pulley, closed pronated grip with palms down, arms extended in front of the face and elbows pointing out to the sides. Step back for cable tension, head in line with the spine. Once the upper arms reach the frontal plane, externally rotate and pull the clasp toward the face.", source: "sourced" },
     { id: "cable_flye", name: "Cable Flye", tier: "C", emphasis: ["bench"], muscles: ["chest"], equipment: ["cable"], sets: 3, reps: "15", restSec: 45, cue: "Elbows locked in a slightly flexed position and held there; move at the shoulder only, bringing the handles together in wide arcs under control.", source: "sourced" },
     { id: "cable_incline_flye", name: "Cable Incline Flye", tier: "C", emphasis: ["bench"], muscles: ["chest", "delts"], equipment: ["cable"], sets: 3, reps: "15", restSec: 45, cue: "Elbows locked in a slightly flexed position and held there; move at the shoulder only, bringing the handles together in wide arcs under control.", source: "sourced" },
     { id: "cable_overhead_tricep_extension", name: "Cable Overhead Tricep Extension", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["cable"], sets: 3, reps: "12", restSec: 60, cue: "Face away from the stack, elbows fixed; extend overhead without flaring.", source: "sourced" },
@@ -1224,19 +1217,14 @@ var _ZK = (() => {
     { id: "cable_rope_twist_curl", name: "Cable Rope Twist Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["biceps", "brachialis", "brachioradialis"], equipment: ["cable"], sets: 3, reps: "12", restSec: 45, cue: "Elbows at the sides; curl and rotate the wrists out at the top.", source: "sourced (corrected)" },
     { id: "cable_row", name: "Cable Row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "biceps"], equipment: ["cable"], sets: 3, reps: "8", restSec: 90, cue: "Chest tall, slight lean back at the finish; drive the elbows past the torso.", source: "sourced" },
     { id: "cable_tricep_pushdown", name: "Cable Tricep Pushdown", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["cable"], sets: 3, reps: "15", restSec: 45, cue: "Elbows locked at the sides; extend fully without letting them drift forward.", source: "sourced" },
-    { id: "cable_upright_row", name: "Cable Upright Row", tier: "B", emphasis: ["ohp"], muscles: ["delts", "traps", "serratus_anterior", "biceps", "forearms"], equipment: ["cable"], sets: 3, reps: "12", restSec: 60, cue: "Elbows lead the pull to chest height; keep the bar close to the body.", source: "sourced" },
     { id: "calves_on_calf_machine", name: "Calves on Calf Machine", tier: "C", emphasis: ["squat"], muscles: ["gastrocnemius", "soleus"], equipment: ["machine"], sets: 3, reps: "15", restSec: 45, cue: "Balls of the feet on the edge of the step, feet hip-width and parallel; lower the heels to a full stretch, then plantar flex through the complete range under control.", source: "sourced" },
     { id: "calves_on_leg_press", name: "Calves on Leg Press", tier: "C", emphasis: ["squat"], muscles: ["gastrocnemius", "soleus"], equipment: ["machine"], sets: 3, reps: "15", restSec: 45, cue: "Balls of the feet on the platform, legs extended; press through the toes, full stretch at the bottom.", source: "sourced" },
     { id: "chest_supported_row", name: "Chest Supported Row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "biceps"], equipment: ["dumbbell", "bench"], sets: 3, reps: "8", restSec: 90, cue: "Chest pinned to the pad; row without using body english.", source: "sourced" },
     { id: "close_grip_barbell_curl", name: "Close Grip Barbell Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["brachialis", "biceps", "brachioradialis"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 45, cue: "Narrow grip, elbows tight; curl through a full range, control the eccentric.", source: "sourced" },
     { id: "dumbbell_bent_over_shrug", name: "Dumbbell Bent Over Shrug", tier: "C", emphasis: ["deadlift"], muscles: ["traps", "upper_back"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 60, cue: "Hinge position, arms straight; shrug straight up, hold briefly at the top.", source: "corroborated" },
-    { id: "dumbbell_facepull", name: "Dumbbell Facepull", tier: "B", emphasis: ["ohp"], muscles: ["rear_delts", "upper_back"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Stand facing a high pulley, closed pronated grip with palms down, arms extended in front of the face and elbows pointing out to the sides. Step back for cable tension, head in line with the spine. Once the upper arms reach the frontal plane, externally rotate and pull the clasp toward the face.", source: "sourced" },
-    { id: "dumbbell_rear_lateral_raise", name: "Dumbbell Rear Lateral Raise", tier: "C", emphasis: ["ohp"], muscles: ["rear_delts", "upper_back", "traps", "rhomboids"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Hinge forward, slight elbow bend; raise to shoulder height, squeeze the rear delts.", source: "sourced" },
     { id: "dumbbell_shrug", name: "Dumbbell Shrug", tier: "C", emphasis: ["deadlift"], muscles: ["traps"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 60, cue: "Arms straight, dumbbells at the sides; shrug straight up, no rolling.", source: "corroborated" },
-    { id: "dumbbell_side_lateral_raise", name: "Dumbbell Side Lateral Raise", tier: "C", emphasis: ["ohp"], muscles: ["side_delts", "supraspinatus"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Slight elbow bend; raise to shoulder height, lead with the elbows.", source: "sourced" },
     { id: "dumbbell_skullcrusher", name: "Dumbbell Skullcrusher", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 60, cue: "Elbows fixed overhead; lower to the forehead, extend without flaring elbows.", source: "sourced" },
     { id: "dumbbell_spider_curl", name: "Dumbbell Spider Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["brachialis", "biceps", "brachioradialis"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 45, cue: "Chest on an incline bench, arms hanging; curl without swinging.", source: "sourced" },
-    { id: "dumbbell_upright_row", name: "Dumbbell Upright Row", tier: "B", emphasis: ["ohp"], muscles: ["delts", "traps", "serratus_anterior", "biceps", "forearms"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 60, cue: "Elbows lead, pull to sternum height; avoid excessive internal rotation.", source: "sourced" },
     { id: "dummbell_twist_curl", name: "Dummbell Twist Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["biceps", "brachialis", "brachioradialis"], equipment: ["dumbbell"], sets: 3, reps: "12", restSec: 45, cue: "Elbows at the sides; curl and rotate the wrist out through the range.", source: "sourced (corrected)" },
     { id: "ez_bar_overhead_tricep_extension", name: "EZ Bar Overhead Tricep Extension", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["ez_bar"], sets: 3, reps: "12", restSec: 60, cue: "Elbows fixed and pointed forward; lower behind the head, extend fully.", source: "sourced" },
     { id: "ez_curl", name: "EZ Curl", tier: "C", emphasis: ["deadlift", "bench"], muscles: ["brachialis", "biceps", "brachioradialis"], equipment: ["ez_bar"], sets: 3, reps: "12", restSec: 45, cue: "Angled grip on the EZ bar; curl without swinging the torso.", source: "sourced" },
@@ -1260,7 +1248,6 @@ var _ZK = (() => {
     { id: "kettlebell_windmill", name: "Kettlebell Windmill", tier: "C", emphasis: ["squat", "deadlift"], muscles: ["obliques", "delts", "hamstrings"], equipment: ["kettlebell"], sets: 3, reps: "8 / side", restSec: 60, cue: "Bell locked out overhead; hinge and reach the free hand to the floor, eyes on the bell.", source: "inferred" },
     { id: "landmine_rotation", name: "Landmine Rotation", tier: "C", emphasis: ["squat", "deadlift"], muscles: ["obliques", "core"], equipment: ["barbell"], sets: 3, reps: "10 / side", restSec: 60, cue: "Sleeve end at chest height; rotate through the hips and torso together, control the return.", source: "inferred" },
     { id: "lat_pulldown_machine", name: "Lat Pulldown (Machine)", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "biceps", "upper_back"], equipment: ["machine"], sets: 3, reps: "12", restSec: 60, cue: "Closed pronated grip wider than shoulder-width, elbows fully extended at the start. Lean the torso slightly back and extend the neck to clear a path for the bar and reduce shoulder impingement stress.", source: "sourced" },
-    { id: "lateral_shoulder_raise", name: "Lateral Shoulder Raise", tier: "C", emphasis: ["ohp"], muscles: ["side_delts", "supraspinatus"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Slight elbow bend; raise to shoulder height, lead with the elbows not the hands.", source: "sourced" },
     { id: "leg_extension_machine", name: "Leg Extension (Machine)", tier: "C", emphasis: ["squat"], muscles: ["quadriceps"], equipment: ["machine"], sets: 3, reps: "15", restSec: 45, cue: "Sit erect with back and hips centered against the pads and the knees in line with the machine's axis of rotation; roller pad on the insteps.", source: "sourced" },
     { id: "log_clean_and_press", name: "Log Clean and Press", tier: "B", emphasis: ["squat"], muscles: ["glutes", "hamstrings", "erectors", "traps", "delts", "triceps"], equipment: ["log"], sets: 3, reps: "10", restSec: 90, cue: "Clean the log to the chest; dip and drive to press overhead.", source: "sourced" },
     { id: "low_pulley_seated_row_machine", name: "Low-Pulley Seated Row (Machine)", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "biceps"], equipment: ["machine"], sets: 3, reps: "8", restSec: 90, cue: "Chest up, drive the elbows back; avoid rounding through the low back.", source: "sourced" },
@@ -1307,14 +1294,11 @@ var _ZK = (() => {
     { id: "stair_calves", name: "Stair Calves", tier: "C", emphasis: ["squat"], muscles: ["gastrocnemius", "soleus"], equipment: ["bodyweight"], sets: 3, reps: "15", restSec: 45, cue: "Balls of the feet on the edge of the step, feet hip-width and parallel; lower the heels to a full stretch, then plantar flex through the complete range under control.", source: "sourced" },
     { id: "standing_calf_heel_raise_machine", name: "Standing Calf (Heel) Raise (Machine)", tier: "C", emphasis: ["squat"], muscles: ["gastrocnemius_(emphasis)", "soleus"], equipment: ["machine"], sets: 3, reps: "15", restSec: 45, cue: "Stand erect with the hips under the shoulders and knees fully extended but not locked; balls of the feet on the near edge of the step, feet hip-width and parallel. Lower the heels to a comfortable stretch, then plantar flex fully.", source: "sourced" },
     { id: "suspension_trainer_inverted_row", name: "Suspension Trainer Inverted Row", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back", "biceps", "core"], equipment: ["suspension_trainer"], sets: 3, reps: "8", restSec: 90, cue: "Body straight, heels planted; pull the chest to the hands, squeeze the back.", source: "sourced" },
-    { id: "suspension_trainer_y_pull", name: "Suspension Trainer Y Pull", tier: "C", emphasis: ["ohp"], muscles: ["rear_delts", "lower_traps"], equipment: ["suspension_trainer"], sets: 3, reps: "15", restSec: 45, cue: "Lean back into the straps, arms in a Y; pull while raising the arms overhead, squeeze the upper back.", source: "inferred" },
-    { id: "thumbs_down_lateral_raise", name: "Thumbs Down Lateral Raise", tier: "C", emphasis: ["ohp"], muscles: ["side_delts", "supraspinatus"], equipment: ["dumbbell"], sets: 3, reps: "15", restSec: 45, cue: "Thumbs rotated down, slight elbow bend; raise to shoulder height.", source: "sourced" },
     { id: "tire_flip", name: "Tire Flip", tier: "B", emphasis: ["squat"], muscles: ["glutes", "hamstrings", "quadriceps", "erectors", "traps"], equipment: ["tire"], sets: 3, reps: "10", restSec: 90, cue: "Squat grip under the tire; drive through the legs and hips to stand it up, then push through.", source: "sourced" },
     { id: "triceps_pushdown_machine", name: "Triceps Pushdown (Machine)", tier: "C", emphasis: ["bench"], muscles: ["triceps"], equipment: ["machine"], sets: 3, reps: "15", restSec: 45, cue: "Elbows pinned to the sides; extend fully without leaning into the handle.", source: "sourced" },
     { id: "underhand_ez_bar_row", name: "Underhand EZ Bar Row", tier: "B", emphasis: ["deadlift", "bench"], muscles: ["lats", "upper_back", "biceps"], equipment: ["ez_bar"], sets: 3, reps: "8", restSec: 90, cue: "Underhand grip, hinge forward; row to the waist, elbows close.", source: "sourced" },
     { id: "underhand_pulldown", name: "Underhand Pulldown", tier: "B", emphasis: ["deadlift", "bench"], muscles: ["lats", "biceps"], equipment: ["cable"], sets: 3, reps: "12", restSec: 60, cue: "Closed supinated (underhand) grip about shoulder-width, elbows fully extended at the start. Lean the torso slightly back and extend the neck to clear a path for the bar and reduce shoulder impingement stress; pull to the upper chest.", source: "sourced (corrected)" },
     { id: "underhand_pullup", name: "Underhand Pullup", tier: "B", emphasis: ["deadlift", "bench"], muscles: ["lats", "biceps"], equipment: ["bodyweight"], sets: 3, reps: "AMRAP", restSec: 90, cue: "Underhand shoulder-width grip; chin over the bar, control the negative.", source: "corroborated" },
-    { id: "upright_row", name: "Upright Row", tier: "B", emphasis: ["ohp"], muscles: ["delts", "traps", "serratus_anterior", "biceps", "forearms"], equipment: ["barbell"], sets: 3, reps: "12", restSec: 60, cue: "Elbows lead the bar up to chest height; keep the bar close to the torso.", source: "sourced" },
     { id: "v_up", name: "V-Up", tier: "C", emphasis: ["squat", "deadlift"], muscles: ["rectus_abdominis", "iliopsoas"], equipment: ["bodyweight"], sets: 3, reps: "12", restSec: 60, cue: "Lying flat; raise the torso and legs together to form a V, touch hands to feet.", source: "by-analogy" },
     { id: "wide_grip_pullup", name: "Wide Grip Pullup", tier: "B", emphasis: ["deadlift"], muscles: ["lats", "upper_back"], equipment: ["bodyweight"], sets: 3, reps: "AMRAP", restSec: 90, cue: "Wide overhand grip; pull the chin over the bar, avoid excessive swing.", source: "corroborated" },
     { id: "wide_grip_pulldown", name: "Wide-Grip Pulldown", tier: "C", emphasis: ["deadlift"], muscles: ["lats", "upper_back"], equipment: ["cable"], sets: 3, reps: "12", restSec: 60, cue: "Wide overhand grip; pull to the upper chest, avoid leaning back too far.", source: "inferred" },
@@ -1510,34 +1494,18 @@ var _ZK = (() => {
     { id: "db_bench_ex", name: "DB bench press", lift: "bench", specificity: 0.7, loadFactor: 0.65, methods: ["RE"], equipment: ["dumbbell", "bench"], cue: "Five-point body-contact position (head, shoulders, buttocks, both feet); closed pronated grip, wrists stiff and forearms perpendicular to the floor. Lower under control to the chest without bouncing or arching the low back.", source: "sourced" },
     { id: "dip_ex", name: "Dip", lift: "bench", specificity: 0.5, loadFactor: 0.55, methods: ["ME", "RE"], equipment: ["bodyweight"], cue: "Support on parallel bars with the elbows fully extended, torso upright or leaning slightly forward. Lower under control until the upper arms are about parallel to the floor, keeping the elbows tracking back rather than flaring wide; press back to full extension.", source: "by-analogy (corrected)" },
     { id: "trap_bar_ex", name: "Trap-bar deadlift", lift: "deadlift", specificity: 0.75, loadFactor: 0.9, methods: ["ME", "RE", "DE"], equipment: ["barbell"], cue: "Stand centered in the bar; drive through the floor to lockout, more quad-friendly than a straight bar.", source: "sourced" },
-    // ---- overhead press: an OPTIONAL fourth trained lift (not a competition lift, so it stays out of
-    // meet attempts and the SBD ratio math). Push press / push jerk are filed here rather than under a
-    // separate 'jerk' lift: for a powerlifter they are overhead-press variations.
-    { id: "high_incline_dumbbell_press", name: "High Incline Dumbbell Press", lift: "ohp", specificity: 0.55, loadFactor: 0.5, methods: ["RE"], equipment: ["dumbbell"], cue: "Steep incline; press up and slightly back, full stretch at the bottom.", source: "sourced (corrected)" },
-    { id: "kettlebell_press_single_arm", name: "Kettlebell Press (Single Arm)", lift: "ohp", specificity: 0.4, loadFactor: 0.3, methods: ["RE"], equipment: ["kettlebell"], cue: "One bell in the rack position; press overhead to lockout without leaning to the side.", source: "sourced" },
-    { id: "push_jerk", name: "Push Jerk", lift: "ohp", specificity: 0.85, loadFactor: 0.8, methods: ["ME", "DE"], equipment: ["barbell"], cue: "Dip straight down with the torso vertical, drive explosively through the hips and knees, then re-bend the knees to receive the bar overhead with the elbows extended.", source: "sourced" },
-    { id: "push_press", name: "Push Press", lift: "ohp", specificity: 0.9, loadFactor: 0.8, methods: ["ME", "DE"], equipment: ["barbell"], cue: "Dip straight down with the torso vertical and drive through the hips and knees; finish with greater shoulder flexion/abduction and triceps extension to lock the bar out overhead.", source: "sourced" },
-    { id: "sandbag_press", name: "Sandbag Press", lift: "ohp", specificity: 0.4, loadFactor: 0.35, methods: ["RE"], equipment: ["sandbag"], cue: "Bag at the shoulder; press overhead to lockout without leaning back.", source: "partially-sourced" },
-    { id: "seated_barbell_shoulder_press", name: "Seated Barbell Shoulder Press", lift: "ohp", specificity: 0.85, loadFactor: 0.9, methods: ["ME", "RE"], equipment: ["barbell"], cue: "Seated, bar starts at the collarbone; press straight overhead to lockout.", source: "sourced" },
-    { id: "seated_barbell_shoulder_press_and_", name: "Seated Barbell Shoulder Press (and Dumbbell Variation)", lift: "ohp", specificity: 0.8, loadFactor: 0.8, methods: ["RE"], equipment: ["dumbbell"], cue: "Seated, press the bar or dumbbells overhead to lockout without leaning back.", source: "sourced" },
-    { id: "seated_dumbbell_shoulder_press", name: "Seated Dumbbell Shoulder Press", lift: "ohp", specificity: 0.7, loadFactor: 0.65, methods: ["RE"], equipment: ["dumbbell"], cue: "Seated, dumbbells at shoulder height; press overhead, don't clack at the top.", source: "sourced" },
-    { id: "shoulder_press_machine", name: "Shoulder Press Machine", lift: "ohp", specificity: 0.55, loadFactor: 0.75, methods: ["RE"], equipment: ["machine"], cue: "Handles at shoulder height; press to full lockout, control the eccentric.", source: "sourced" },
-    { id: "standing_barbell_shoulder_press", name: "Standing Barbell Shoulder Press", lift: "ohp", specificity: 0.95, loadFactor: 1, methods: ["ME", "DE", "RE"], equipment: ["barbell"], cue: "Bar at the collarbone, brace hard; press overhead, avoid excessive lean-back.", source: "sourced" },
-    { id: "standing_dumbbell_shoulder_press", name: "Standing Dumbbell Shoulder Press", lift: "ohp", specificity: 0.75, loadFactor: 0.7, methods: ["RE"], equipment: ["dumbbell"], cue: "Dumbbells at shoulder height, brace the core; press overhead to lockout.", source: "sourced" },
-    { id: "ohp_ex", name: "Overhead press", lift: "ohp", specificity: 1, loadFactor: 1, methods: ["ME", "DE", "RE"], equipment: ["barbell"], cue: "Brace, bar over the mid-foot; press through and finish with the head 'through the window'.", source: "sourced" },
-    { id: "machine_ohp", name: "Overhead press (machine)", lift: "ohp", specificity: 0.55, loadFactor: 0.75, methods: ["RE"], equipment: ["machine"], cue: "Handles at shoulder height; press to lockout without leaning back.", source: "sourced" }
   ];
-  function selectMain(lift, method, phase, blockIndex, available, dayIdx) {
+  function selectMain(lift, method, phase, blockIndex, available, dayIdx, forceVariation = false) {
     const all = MAIN_MOVEMENTS.filter((m) => m.lift === lift);
     const comp = all.find((m) => m.specificity === 1);
     const compOk = comp.equipment.every((e) => available.includes(e));
-    if ((phase === "realizational" || method === "ME" && phase === "transmutative") && compOk) {
+    if (!forceVariation && (phase === "realizational" || method === "ME" && phase === "transmutative") && compOk) {
       return comp;
     }
     const cands = all.filter((m) => m.methods.includes(method) && m.equipment.every((e) => available.includes(e)));
     if (cands.length === 0) return comp;
     const variations = cands.filter((m) => m.specificity < 1).sort((a, b) => b.specificity - a.specificity);
-    if (phase === "accumulative" && variations.length) {
+    if ((phase === "accumulative" || forceVariation) && variations.length) {
       if (dayIdx == null) return variations[blockIndex % variations.length];
       const bands = 3;
       const size = Math.max(1, Math.ceil(variations.length / bands));
@@ -1603,14 +1571,6 @@ var _ZK = (() => {
       }).sort((a, b) => a.order - b.order)
     );
   }
-  var SPEED = {
-    sets: 6,
-    reps: 3,
-    restSec: 60,
-    pct: 0.55,
-    cue: "~55% \u2014 every rep as explosive as you can. No bar-speed tool here, so the speed is on you: when a rep stops feeling fast, end the set."
-  };
-  var SPEED_PHASES = ["accumulative", "transmutative"];
   var METHOD_CUE = {
     ME: "Work up to a heavy top set; full intent, leave ~1 in the tank.",
     DE: "Sub-maximal load moved with maximal speed; reset each rep.",
@@ -1705,9 +1665,88 @@ var _ZK = (() => {
     }
     return { inTaper: true, drop: false, sets, reps, load: round5(pct * workingMax), label, taperWeek };
   }
-  function buildFullWeek(zones, exposures, e1rms, inv, bar, phase, blockIndex, available, speedWork = false, speedOrder = "before", mod, trimAccessories = false, daysPerWeek = 3, freqPriority = "bench", weekInBlock = 0, deload = false) {
+  // (ours) beginner-fork fixed weekly template \u2014 locked lift pairings per calendar day, replacing the
+  // rotate-and-sequence logic below for exactly 3-day and 4-day plans. Other daysPerWeek values fall
+  // through to the original rotation path unchanged. Frequency is a direct property of this table:
+  // squat 2x, bench 3x, deadlift 1-2x for both plans (count each lift's appearances below).
+  var BEGINNER_TEMPLATE = {
+    3: [
+      [{ lift: "squat", role: "primary" }, { lift: "bench", role: "primary" }],
+      [{ lift: "deadlift", role: "primary" }, { lift: "bench", role: "variation" }],
+      [{ lift: "squat", role: "variation" }, { lift: "bench", role: "secondary" }, { lift: "deadlift", role: "light" }]
+    ],
+    4: [
+      [{ lift: "squat", role: "primary" }, { lift: "bench", role: "primary" }],
+      [{ lift: "deadlift", role: "primary" }, { lift: "bench", role: "variation" }],
+      [{ lift: "squat", role: "variation" }, { lift: "bench", role: "secondary" }],
+      [{ lift: "deadlift", role: "variation" }, { lift: null, role: "upper" }]
+    ]
+  };
+  // steps down LADDER (via the existing downShift helper) from the role's base zone \u2014 primary heaviest,
+  // light lightest. secondary keeps the competition lift at moderate effort; variation swaps the movement
+  // and backs off one step further.
+  var ROLE_STEP = { primary: 0, secondary: 1, variation: 2, light: 3 };
+  var FORCE_VARIATION_ROLES = /* @__PURE__ */ new Set(["variation", "light"]);
+  function buildFullWeek(zones, exposures, e1rms, inv, bar, phase, blockIndex, available, mod, trimAccessories = false, daysPerWeek = 3, freqPriority = "bench", weekInBlock = 0, deload = false) {
     const emphasis = mainMethod(phase, zones, exposures);
     const secondary = emphasis === "ME" ? "RE" : "ME";
+    const tmpl = BEGINNER_TEMPLATE[daysPerWeek];
+    if (tmpl) {
+      return tmpl.map((slots, dayIdx) => {
+        const items = [];
+        const mains = [];
+        slots.forEach(({ lift, role }) => {
+          if (lift == null) return;
+          const method = role === "primary" ? emphasis : role === "light" ? "RE" : secondary;
+          let zone = downShift(zones[method] ?? zones[emphasis], ROLE_STEP[role]);
+          let down = false;
+          if (mod) {
+            const r = mod(zone, lift);
+            zone = r.zone;
+            down = r.down;
+          }
+          const wp = down ? { setDelta: 0, pctBump: 0 } : weekProgression(phase, weekInBlock);
+          const dl = deload && !down;
+          const mv = selectMain(lift, method, phase, blockIndex, available, dayIdx, FORCE_VARIATION_ROLES.has(role));
+          const sch = ZONE_SCHEME[zone];
+          items.push({
+            group: "main",
+            lift,
+            name: mv.name,
+            sets: dl ? Math.max(2, sch.sets - 2) : Math.max(2, sch.sets + wp.setDelta),
+            reps: String(sch.reps),
+            load: roundToPlates((dl ? ZONE_PCT[zone] * 0.9 : Math.min(ZONE_PCT[zone] + wp.pctBump, 0.95)) * e1rms[lift] * mv.loadFactor, inv, bar),
+            rest: `${sch.restMin}\u2013${sch.restMax} min`,
+            rpe: RPE[zone],
+            method,
+            zone,
+            downRegulated: down,
+            cue: mv.cue + " " + METHOD_CUE[method]
+          });
+          mains.push({ lift, mv, role });
+        });
+        // (ours) accessories attach to every primary-role lift on the day (a Monday with two primaries
+        // gets accessories for both \u2014 that's the day both squat and bench are actually trained hard, not
+        // excess volume). A day with no primary at all (e.g. Friday's variation/secondary/light trio)
+        // falls back to just its first lift, so it still gets some accessory work without tripling it.
+        const anchors = mains.filter((m) => m.role === "primary");
+        if (!anchors.length && mains.length) anchors.push(mains[0]);
+        for (const anchor of anchors) {
+          for (const a of selectAccessories(anchor.lift, phase, available, trimAccessories || deload, [anchor.mv.name], blockIndex)) {
+            items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
+          }
+        }
+        // (ours) "upper" slot (Saturday, 4-day plan): no barbell main lift \u2014 ACCESSORIES has no generic
+        // "upper" tag, so this reuses the bench-emphasis pool (already covers triceps/delts/chest/upper
+        // back). OHP is gone from this fork entirely, so nothing else inserts here.
+        if (slots.some((s) => s.lift == null)) {
+          for (const a of selectAccessories("bench", phase, available, trimAccessories || deload, [], blockIndex)) {
+            items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
+          }
+        }
+        return items;
+      });
+    }
     const baseLifts = ["squat", "bench", "deadlift"];
     const lifts = baseLifts.map((_, i) => baseLifts[(i + blockIndex) % 3]);
     const dayPlan = [];
@@ -1730,20 +1769,6 @@ var _ZK = (() => {
       const mv = selectMain(lift, method, phase, blockIndex, available, dayIdx);
       const sch = ZONE_SCHEME[zone];
       const items = [];
-      const speedItem = speedWork && SPEED_PHASES.includes(phase) && !trimAccessories && !deload ? {
-        group: "speed",
-        lift,
-        name: `Speed ${(EX[lift] ?? lift).toLowerCase()}`,
-        sets: SPEED.sets,
-        reps: String(SPEED.reps),
-        load: roundToPlates(SPEED.pct * e1rms[lift], inv, bar),
-        rest: `${SPEED.restSec}s`,
-        rpe: "explosive",
-        method: "DE",
-        zone: "P",
-        cue: SPEED.cue
-      } : null;
-      if (speedItem && speedOrder === "before") items.push(speedItem);
       items.push({
         group: "main",
         lift,
@@ -1758,9 +1783,7 @@ var _ZK = (() => {
         downRegulated: down,
         cue: mv.cue + " " + METHOD_CUE[method]
       });
-      if (speedItem && speedOrder === "after") items.push(speedItem);
-      const used = [mv.name, ...speedItem ? [speedItem.name] : []];
-      for (const a of selectAccessories(lift, phase, available, trimAccessories || deload, used, blockIndex)) {
+      for (const a of selectAccessories(lift, phase, available, trimAccessories || deload, [mv.name], blockIndex)) {
         items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
       }
       return items;
@@ -1822,7 +1845,7 @@ const PCOL={45:"#3a6fc4",35:"#d4a72c",25:"#35a05e",20:"#3a6fc4",15:"#d4a72c",10:
 const state={plan:null,maxes:{},unit:"lb",profile:{},cycle:{},log:[],swaps:{},pins:{},altLift:{},bands:[],deloadWeek:null,autoReg:{},autoRegOn:true,autoRegLast:null,handoffDismissed:null,storeOK:true};
 const STORE="zk_v1", LBKG=2.2046226;
 function loadStore(){try{const r=localStorage.getItem(STORE);return r?JSON.parse(r):null;}catch(e){state.storeOK=false;return null;}}
-function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,altLift:state.altLift,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,warmupSwaps:state.warmupSwaps,potOpt:state.potOpt,potBySession:state.potBySession,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:{status:$("#status").value,planby:$("#planby").value,days:$("#days").value,weeks:$("#weeks").value,test:$("#test").value,compdate:$("#compdate").value,unit:$("#unit").value,speed:$("#speed").value,freq:$("#freq").value,autoreg:$("#autoreg")?$("#autoreg").value:"on",rpemode:$("#rpemode")?$("#rpemode").value:"on",ohpmode:$("#ohpmode")?$("#ohpmode").value:"off",ohp:$("#ohp")?$("#ohp").value:"115",squat:$("#squat").value,bench:$("#bench").value,deadlift:$("#deadlift").value}}));}catch(e){state.storeOK=false;}}
+function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,altLift:state.altLift,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,warmupSwaps:state.warmupSwaps,potOpt:state.potOpt,potBySession:state.potBySession,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:{status:$("#status").value,planby:$("#planby").value,days:$("#days").value,weeks:$("#weeks").value,test:$("#test").value,compdate:$("#compdate").value,unit:$("#unit").value,freq:$("#freq").value,autoreg:$("#autoreg")?$("#autoreg").value:"on",rpemode:$("#rpemode")?$("#rpemode").value:"on",squat:$("#squat").value,bench:$("#bench").value,deadlift:$("#deadlift").value}}));}catch(e){state.storeOK=false;}}
 // ---- dual rest timer (ours): fixed bottom bar; auto-started on set/exercise completion; +15/-15 cumulative; skip ----
 const RestTimer=(function(){
   let remaining=0, iv=null, kind="set", bar=null, actx=null;
@@ -1940,7 +1963,6 @@ const meZone=b=>{ const p=b.prescriptions.find(p=>p.method==="ME"); if(p) return
 
 function read(){
   state.unit=$("#unit").value;
-  const sv=$("#speed").value; state.speed=sv!=="off"; state.speedOrder=sv==="after"?"after":"before";
   state.autoRegOn=$("#autoreg")?$("#autoreg").value!=="off":true; ensureAutoReg();
   state.freqPriority=$("#freq").value;
   state.equipment=["barbell","rack","dumbbell","cable","bench","bodyweight","machine"];
@@ -1959,8 +1981,6 @@ function read(){
   state.cycle={cycleLengthWeeks:weeks};
   if(testWeek>0&&testWeek<=weeks) state.cycle.testWeek=testWeek;
   for(const l of lifts) state.maxes[l]=+$("#"+l).value;
-  state.ohpOn=$("#ohpmode")?$("#ohpmode").value==="on":false;
-  state.maxes.ohp=+(($("#ohp")||{}).value)||0;
 }
 function generate(){ read(); state.plan=ZK.generatePlan(state.profile,state.cycle); renderToday(); renderProgress(); renderSchedule(); saveAll(); }
 
@@ -2138,7 +2158,6 @@ function warmupPlan(){
   const pick=(base)=>base.map(x=>{ const s=ov[x.id]; if(!s) return x; const alt=WARMUP_ALTS.concat(WARMUP_RAISE,WARMUP_ACTIVATE).find(a=>a.id===s); return alt?Object.assign({},alt,{slot:x.id}):x; });
   return {raise:pick(WARMUP_RAISE),activate:pick(WARMUP_ACTIVATE)};
 }
-function DUP_ROTATION_ZONE(dayIdx){ const rot=(ZK.DUP_ROTATION&&ZK.DUP_ROTATION.accumulative)||["D1","D2","D3"]; return rot[dayIdx%rot.length]; }
 function potentiationPick(){
   const id=state.potOpt||POTENTIATE_OPTS[0].id;
   return POTENTIATE_OPTS.find(o=>o.id===id)||POTENTIATE_OPTS[0];
@@ -2231,7 +2250,7 @@ function renderToday(){
     else if(wdi&&wdi.lift&&taperActive){ const _lf=wdi.lift, _do=wdi.daysOut; const tp=ZK.taperMainPrescription(_lf,_do,effMaxOf(_lf)); taperRx=tp;
       if(tp.drop){ taperRest={lift:_lf}; day=[]; }
       else { const mv=(ZK.MAIN_MOVEMENTS||[]).find(m=>m.lift===_lf&&m.specificity===1)||{name:LAB2[_lf]}; day=[{group:"main",lift:_lf,name:mv.name,sets:tp.sets,reps:String(tp.reps),load:tp.load,cue:tp.label,method:"ME",rest:"180s"}]; } }
-    else { day=(ZK.buildFullWeek(zones,b.budget.exposures,effMaxes(),kit().plates,kit().bar,b.phase,b.index,GYM,state.speed,state.speedOrder,modUse,(band==="red")||deload,state.profile.daysPerWeek,state.freqPriority,wib,deload)[di])||[]; }
+    else { day=(ZK.buildFullWeek(zones,b.budget.exposures,effMaxes(),kit().plates,kit().bar,b.phase,b.index,GYM,modUse,(band==="red")||deload,state.profile.daysPerWeek,state.freqPriority,wib,deload)[di])||[]; }
     // (ours) closed-loop accumulation volume gate: the weekly set-ramp only advances on weeks whose final set
     // met (target-2) reps with all sets completed. A short/incomplete week holds; the ramp resumes on a later success. Caps at +2.
     if(b.phase==="accumulative" && wib>0 && !deload && band!=="red"){
@@ -2255,23 +2274,6 @@ function renderToday(){
       // failure point (RPE7~3RIR, RPE8~2RIR) so a miscalibrated RPE still can't run past a safe rep count.
       it.repCeiling=parseInt(it.reps,10)+(it.targetRpe<=7?2:1);
     }); }
-    // (ours) Optional overhead press. It is NOT a competition lift, so it stays out of meet attempts,
-    // the SBD total and the ratio math — it rides as a trained secondary on the bench day, loaded off
-    // its own max with its own specificity ladder.
-    if(state.ohpOn && state.maxes.ohp>0){
-      const isBenchDay=day.some(x=>x.group==="main"&&x.lift==="bench");
-      if(isBenchDay && !day.some(x=>x.lift==="ohp")){
-        const zn=(b.phase==="accumulative")?DUP_ROTATION_ZONE(di):"M";
-        const sch=ZK.ZONE_SCHEME[zn], pct=ZK.ZONE_PCT[zn];
-        const mv=ZK.selectMain("ohp","RE",b.phase,b.index,GYM,di);
-        const load=ZK.roundToPlates(pct*(state.maxes.ohp||0)*(mv?mv.loadFactor:1),kit().plates,kit().bar);
-        const idx=day.findIndex(x=>x.group!=="main");
-        const item={group:"main",lift:"ohp",name:mv?mv.name:"Overhead press",sets:sch.sets,reps:String(sch.reps),
-          load:load,zone:zn,method:"RE",rest:sch.restMin+"\u2013"+sch.restMax+" min",rpe:"@7\u20138",
-          cue:mv?mv.cue:"",secondary:true};
-        day.splice(idx<0?day.length:idx,0,item);
-      }
-    }
     // Apply on-the-fly exercise swaps, recomputing load for main swaps. The key includes the WEEK:
     // without it a swap made in week 3 also rewrote the same slot in weeks 1-2, retroactively changing
     // sessions that were already trained. Legacy block|day|slot keys are still honoured for the current
@@ -2354,7 +2356,7 @@ function renderToday(){
     if(taperRest){ const rc=el("div","restday"); rc.innerHTML="\ud83d\udca4 <b>Rest day</b> \u2014 peaking for the meet. No training today; prioritize sleep, food, and light mobility."; o.appendChild(rc); }
     let lastGroup="";
     day.forEach((e,idx)=>{
-      if(e.group!==lastGroup){lastGroup=e.group;const lab={speed:"Speed work",main:"Main lift",accessory:"Accessory work",core:"Core & midline"}[e.group];o.appendChild(el("div","tierlab",lab));}
+      if(e.group!==lastGroup){lastGroup=e.group;const lab={main:"Main lift",accessory:"Accessory work",core:"Core & midline"}[e.group];o.appendChild(el("div","tierlab",lab));}
       const card=el("div","ex"+(e.downRegulated?" downreg":"")+(e.group!=="main"?" acc":""));
       const badge=e.method?`<span class="exbadge ${e.method}">${e.method}</span>`:"";
       card.appendChild(el("div","exhead",`<span class="exname">${e.name}</span>${badge}${e.swapped?' <span class="swaptag">swapped</span>':''}${e.pinned?' <span class="pintag">\ud83d\udccc pinned</span>':''}${e.volHeld?' <span class="voltag" title="a prior week fell 3+ reps short of target \u2014 the extra set is held until you complete the reps">\u21ba set held</span>':''}`));
@@ -2421,7 +2423,6 @@ function renderToday(){
       }
       o.appendChild(card);
     });
-    if(day.some(e=>e.group==="speed")){const sn=el("div","note");sn.innerHTML=`<b>Speed work is explosive intent on a moderate load, not measured velocity</b> — there's no bar-speed tool here, so keep every rep genuinely fast and end the set when it slows. It's gated to base & strength blocks and drops at the peak.`;o.appendChild(sn);}
     const n=el("div","note"); n.innerHTML=band==="green"?`Today <b>counts</b> toward your e1RM re-baseline.`:`These sets are <b>tagged down-regulated</b> — excluded from your e1RM, so a rough day can't masquerade as lost strength.`;
     o.appendChild(n);
     // Start workout → snapshot this reviewed session, then open the focused log view.
@@ -2766,7 +2767,7 @@ $("#reset-all").addEventListener("click",()=>{
   try{localStorage.removeItem(STORE);}catch(e){}
   location.reload();
 });
-["status","days","weeks","test","planby","compdate","speed","freq","squat","bench","deadlift","ohpmode","ohp"].forEach(id=>{const e=$("#"+id);if(e)e.addEventListener("change",generate);});
+["status","days","weeks","test","planby","compdate","freq","squat","bench","deadlift"].forEach(id=>{const e=$("#"+id);if(e)e.addEventListener("change",generate);});
 // units: convert the entered maxes (lb<->kg) BEFORE regenerating, so 255 lb is not read as 255 kg
 $("#unit").addEventListener("change",()=>{
   const nu=$("#unit").value, ou=state.unit||"lb";
@@ -2896,7 +2897,7 @@ function boundaryKey(bIndex){ return "b"+bIndex; }
 //  · rep PRs — the heaviest load you have ACTUALLY lifted for a given rep count. A fact, not a model.
 //  · best e1RM — the highest Epley estimate off an eligible set. An estimate, and labelled as one.
 // Only working/amrap/failure sets count; warm-ups and down-regulated sets are excluded, matching e1RM rules.
-const LIFT_LABEL={squat:"Squat",bench:"Bench",deadlift:"Deadlift",ohp:"Overhead press"};
+const LIFT_LABEL={squat:"Squat",bench:"Bench",deadlift:"Deadlift"};
 const PR_BUCKETS=[[1,1,"1RM"],[2,3,"2\u20133"],[4,5,"4\u20135"],[6,8,"6\u20138"],[9,12,"9\u201312"]];
 function prsFor(lift,logs){
   const sets=logs.filter(s=>s.lift===lift&&(s.setType==="working"||s.setType==="amrap"||s.setType==="failure")&&!s.downRegulated&&s.load>0&&s.reps>0);
@@ -3334,8 +3335,8 @@ function fmtSchedDate(d){ return d.toLocaleDateString(undefined,{weekday:"short"
 function blockDayMains(b){
   const GYM=["barbell","rack","dumbbell","cable","bench","bodyweight","machine"];
   const zs={}; b.prescriptions.forEach(p=>zs[p.method]=p.zone);
-  const wk=ZK.buildFullWeek(zs,b.budget.exposures,state.maxes,kit().plates,kit().bar,b.phase,b.index,GYM,state.speed,state.speedOrder,undefined,false,state.profile.daysPerWeek,state.freqPriority);
-  return wk.map(day=>{const m=(day||[]).find(x=>x.group==="main"); return m?m.lift:null;});
+  const wk=ZK.buildFullWeek(zs,b.budget.exposures,state.maxes,kit().plates,kit().bar,b.phase,b.index,GYM,undefined,false,state.profile.daysPerWeek,state.freqPriority);
+  return wk.map(day=>{const mains=[...new Set((day||[]).filter(x=>x.group==="main").map(x=>x.lift))]; return mains.length?mains:null;});
 }
 function renderSchedule(){
   const root=$("#schedule"); if(!root) return; root.innerHTML="";
@@ -3376,7 +3377,7 @@ function renderSchedule(){
       _wd.forEach((dd,di)=>{
         const date=addDaysD(mon0,_gw*7+dd.offset), dIso=isoLocal(date);
         const dOut=Math.round((compDateObj()-date)/86400000);
-        const lab=dd.meet?"\ud83c\udfc6 Meet day":dd.lift?(LAB2[dd.lift]+" \u00b7 taper"+(isFinite(dOut)?" \u00b7 "+dOut+"d out":"")):("Day "+(di+1)+(mains[di]?" \u00b7 "+mains[di]:""));
+        const lab=dd.meet?"\ud83c\udfc6 Meet day":dd.lift?(LAB2[dd.lift]+" \u00b7 taper"+(isFinite(dOut)?" \u00b7 "+dOut+"d out":"")):("Day "+(di+1)+(mains[di]?" \u00b7 "+mains[di].join(" + "):""));
         const done=doneKeys.has(b.index+"|"+_gw+"|"+di)||loggedDates.has(dIso), isToday=dIso===todayIso;
         const row=el("div","schrow tappable"+(done?" done":"")+(isToday?" today":"")+(dd.taper||dd.meet?" tapered":"")); row.innerHTML='<div class="schmain"><span class="sdate">'+fmtSchedDate(date)+'</span><span class="sday">'+lab+'</span></div>'+(done?'<span class="schk">\u2713</span>':isToday?'<span class="schtoday">today</span>':'<span class="schgo"></span>');
         row.addEventListener("click",()=>openDay(bIdx,i,di));
