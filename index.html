@@ -3534,6 +3534,50 @@ function resumeCard(root){
   root.insertBefore(c, root.firstChild);
 }
 
+$("#gen").addEventListener("click",generate);
+$("#export-csv").addEventListener("click",exportCsv);
+$("#backup-json")&&$("#backup-json").addEventListener("click",exportBackup);
+$("#restore-json")&&$("#restore-json").addEventListener("click",()=>{ const f=$("#restore-file"); if(f) f.click(); });
+$("#restore-file")&&$("#restore-file").addEventListener("change",function(){
+  const file=this.files&&this.files[0]; if(!file) return;
+  const done=()=>{ this.value=""; };
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const cur=(state.log||[]).length;
+    if(cur>0&&!confirm("Restoring replaces everything currently in this browser — including "+cur+" logged session"+(cur===1?"":"s")+". Continue?")){ done(); return; }
+    const r=restoreBackup(String(rd.result||""));
+    if(!r.ok){ alert(r.msg); done(); return; }
+    alert("Restored "+r.sessions+" logged session"+(r.sessions===1?"":"s")+(r.when?" from "+new Date(r.when).toLocaleDateString():"")+". Reloading.");
+    done(); location.reload();
+  };
+  rd.onerror=()=>{ alert("Couldn't read that file."); done(); };
+  rd.readAsText(file);
+});
+$("#reset-logs").addEventListener("click",()=>{
+  if(!confirm("Reset logs?\n\nThis permanently deletes your saved sets, swaps, pinned loads, and completion checkmarks. Your settings and maxes are kept. There is no undo.")) return;
+  state.log=[]; state.swaps={}; state.pins={}; saveAll(); generate();
+});
+$("#reset-all").addEventListener("click",()=>{
+  if(!confirm("Full reset?\n\nThis permanently deletes EVERYTHING — logs, swaps, completion, settings, and maxes — back to defaults. There is no undo.")) return;
+  try{localStorage.removeItem(STORE);}catch(e){}
+  location.reload();
+});
+// Setup controls push their value into state.settings, then regenerate. The control is an input
+// device; nothing downstream reads the DOM for settings any more.
+["status","days","weeks","test","planby","compdate","freq","squat","bench","deadlift","autoreg","rpemode"]
+  .forEach(id=>{const e=$("#"+id); if(e) e.addEventListener("change",()=>{ setSetting(id,e.value,false); generate(); });});
+// units: convert the entered maxes (lb<->kg) BEFORE regenerating, so 255 lb is not read as 255 kg
+$("#unit")&&$("#unit").addEventListener("change",()=>{
+  const nu=$("#unit").value, ou=state.unit||"lb";
+  setSetting("unit",nu,false);
+  if(nu!==ou){
+    const conv=(v)=> ou==="lb"&&nu==="kg" ? Math.round(v/2.2046226/2.5)*2.5
+                  : ou==="kg"&&nu==="lb" ? Math.round(v*2.2046226/5)*5 : v;
+    ["squat","bench","deadlift"].forEach(id=>setSetting(id,conv(parseFloat(S(id))||0)));
+  }
+  generate();
+});
+
 function e1rmSeries(lift,logs){
   const byDate={};
   logs.forEach(s=>{ if(s.lift!==lift||s.method==="DE"||!ZK.eligibleForE1rm(s)) return;
