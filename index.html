@@ -1912,9 +1912,13 @@ var _ZK = (() => {
     // taper — only light core/health work
     deload: { B: 1, C: 1 }
   };
-  function selectAccessories(emphasis, phase, available, trim = false, excludeNames = [], rotate = 0) {
-    let vol = VOL[phase] ?? { B: 1, C: 1 };
-    if (trim) vol = { B: Math.max(0, vol.B - 1), C: Math.max(0, vol.C - 1) };
+  function selectAccessories(emphasis, phase, available, trim = false, excludeNames = [], rotate = 0, budget = null) {
+    // (ours) budget overrides the phase's normal vol entirely — used to split one day's accessory
+    // work across two lifts (see the anchors/upper-slot split below) instead of giving each its own
+    // full phase-vol batch. trim does not apply on top of an explicit budget: the budget is already
+    // the "this is what today gets" number, not something to further shrink for readiness/deload.
+    let vol = budget || (VOL[phase] ?? { B: 1, C: 1 });
+    if (!budget && trim) vol = { B: Math.max(0, vol.B - 1), C: Math.max(0, vol.C - 1) };
     const pool = ACCESSORIES.filter(
       (a) => a.emphasis.includes(emphasis) && a.equipment.every((e) => available.includes(e)) && !excludeNames.map((n) => n.trim().toLowerCase()).includes(a.name.trim().toLowerCase())
       // never repeat the day's main/speed movement as an accessory
@@ -2200,6 +2204,13 @@ var _ZK = (() => {
       [{ lift: "deadlift", role: "variation" }, { lift: null, role: "upper" }]
     ]
   };
+  // (ours) weekly frequency per the comment above \u2014 used only to tie-break which lift gets the larger
+  // share when two lifts split one day's accessory budget (see the anchors/upper-slot split below).
+  // deadlift is written here as a flat 2 (not the "1\u20132x" range in the comment above) because nothing in
+  // this codebase counts real per-week appearances; 2 is what BEGINNER_TEMPLATE's arrays literally give it
+  // in both the 3-day and 4-day tables. It's a simplification, not a computed or authoritative value \u2014
+  // it happens not to matter today since bench (3) always wins the tie-break against deadlift (2) regardless.
+  var LIFT_FREQ = { squat: 2, bench: 3, deadlift: 2 };
   // steps down LADDER (via the existing downShift helper) from the role's base zone \u2014 primary heaviest,
   // light lightest. secondary keeps the competition lift at moderate effort; variation swaps the movement
   // and backs off one step further.
@@ -2249,19 +2260,44 @@ var _ZK = (() => {
         // falls back to just its first lift, so it still gets some accessory work without tripling it.
         const anchors = mains.filter((m) => m.role === "primary");
         if (!anchors.length && mains.length) anchors.push(mains[0]);
-        for (const anchor of anchors) {
-          for (const a of selectAccessories(anchor.lift, phase, available, trimAccessories || deload, [anchor.mv.name], blockIndex)) {
-            items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
-          }
-        }
         // (ours) "upper" slot (Saturday, 4-day plan): no barbell main lift \u2014 ACCESSORIES has no generic
         // "upper" tag, so this reuses the bench-emphasis pool (already covers triceps/delts/chest/upper
         // back). OHP is gone from this fork entirely, so nothing else inserts here.
-        if (slots.some((s) => s.lift == null)) {
-          for (const a of selectAccessories("bench", phase, available, trimAccessories || deload, [], blockIndex)) {
+        const hasUpper = slots.some((s) => s.lift == null);
+        const pushAcc = (lift, excl, budget) => {
+          for (const a of selectAccessories(lift, phase, available, trimAccessories || deload, excl, blockIndex, budget)) {
             items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
           }
+        };
+        if (anchors.length >= 2 || (anchors.length === 1 && hasUpper)) {
+          // (ours) two "hard" lift-blocks sharing one day (two primaries, or the day's anchor plus the
+          // upper slot's bench fallback) split a single phase-relative accessory budget instead of each
+          // getting its own full phase-vol batch \u2014 otherwise a two-primary/upper day trains roughly
+          // double a single-primary day's accessory volume for no programming reason. The higher
+          // weekly-frequency lift (LIFT_FREQ) gets the larger share; ties keep the first lift as "big".
+          const lift1 = anchors[0].lift, excl1 = [anchors[0].mv.name];
+          const lift2 = anchors.length >= 2 ? anchors[1].lift : "bench";
+          const excl2 = anchors.length >= 2 ? [anchors[1].mv.name] : [];
+          const bigIsLift1 = (LIFT_FREQ[lift1] ?? 0) >= (LIFT_FREQ[lift2] ?? 0);
+          const v = VOL[phase] ?? { B: 1, C: 1 };
+          const total = v.B + v.C - 1;   // one shared budget for the day, not one full batch per lift
+          const tierAlt = blockIndex % 2 === 0 ? { B: 1, C: 0 } : { B: 0, C: 1 };
+          const zero = { B: 0, C: 0 };
+          let bigBudget, smallBudget;
+          if (total >= 2) { bigBudget = { B: 1, C: 1 }; smallBudget = total - 2 > 0 ? tierAlt : zero; }
+          else { bigBudget = total > 0 ? tierAlt : zero; smallBudget = zero; }
+          pushAcc(lift1, excl1, bigIsLift1 ? bigBudget : smallBudget);
+          pushAcc(lift2, excl2, bigIsLift1 ? smallBudget : bigBudget);
+        } else {
+          for (const anchor of anchors) pushAcc(anchor.lift, [anchor.mv.name], null);
+          if (hasUpper) pushAcc("bench", [], null);   // defensive: unreachable with today's templates (upper always pairs with exactly one anchor)
         }
+        // (ours) group same-tier items together regardless of which lift contributed them, so the
+        // UI's "insert a header on group change" logic doesn't fire twice for one section on a
+        // two-primary/upper day (e.g. squat's accessories then bench's would otherwise interleave
+        // as accessory, core, accessory, core and print "Accessory work"/"Core & midline" twice each).
+        const GROUP_RANK = { main: 0, accessory: 1, core: 2 };
+        items.sort((a, b) => (GROUP_RANK[a.group] ?? 9) - (GROUP_RANK[b.group] ?? 9));
         return items;
       });
     }
