@@ -640,8 +640,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
   padding:8px 0;min-height:44px;cursor:pointer;text-align:left}
 .rampsrc{font-family:var(--mono);font-size:9px;font-weight:400;letter-spacing:.02em;color:var(--faint);text-transform:none}
 .rampphase{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:9px 0 5px;display:flex;align-items:center;gap:7px}
-.potsrc{font-size:8px;color:var(--faint);text-transform:none;letter-spacing:0}
-.potsrc b{color:var(--muted)}
 .wrow{display:grid;grid-template-columns:20px 1fr auto 28px;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:7px;margin-bottom:5px;background:var(--surface)}
 .wrow.checked{opacity:.45}
 .wrow.checked .wnm{color:var(--green)}
@@ -652,17 +650,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 .wsw:hover{border-color:var(--accent);color:var(--accent)}
 .wswpanel{display:flex;flex-direction:column;gap:5px;margin:0 0 7px}
 .wswpanel.hidden{display:none}
-.potnote{font-size:11px;color:var(--muted);background:rgba(255,122,26,.07);border:1px solid rgba(255,122,26,.35);border-radius:8px;padding:8px 10px;margin:6px 0 2px;line-height:1.5}
-.potnote b{color:var(--text)}
-.potblock{border:1px solid rgba(255,122,26,.4);border-radius:10px;padding:9px 10px;margin:8px 0 10px;background:rgba(255,122,26,.04)}
-.potbhd{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:7px}
-.potoffer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px dashed var(--line);border-radius:9px;padding:9px 11px;margin:9px 0 2px}
-.potofftxt{flex:1;min-width:150px;font-size:11px;color:var(--muted);line-height:1.5}
-.potofftxt b{color:var(--text)}
-.potadd{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:8px 14px;cursor:pointer}
-.potadd:hover{background:rgba(255,122,26,.12)}
-.potoff{margin-left:auto;background:transparent;border:1px solid var(--line);color:var(--faint);border-radius:5px;font-size:11px;line-height:1;padding:2px 7px;cursor:pointer}
-.potoff:hover{border-color:var(--red);color:var(--red)}
 .logrow{display:grid;grid-template-columns:22px 34px 84px 1fr 1fr 1fr;align-items:center;gap:6px;font-size:11px;color:var(--muted);
   border-radius:10px;padding:10px 9px;margin-bottom:7px;background:var(--surface2);border:1px solid var(--line)}
 .logrow .logn{color:var(--faint);font-family:var(--mono);font-size:10px}
@@ -1928,6 +1915,36 @@ var _ZK = (() => {
     const Cs = rot(pool.filter((a) => a.tier === "C")).slice(0, vol.C).map((a, i) => ({ ...a, slot: `C${i + 1}` }));
     return [...Bs, ...Cs];
   }
+  // (ours) which section an accessory DISPLAYS under is derived from what it actually trains, not from
+  // its tier — tier B/C stays purely a volume-budget concern (VOL[phase].B/.C above). A tier had been
+  // used as a display proxy, which is how a pure triceps isolation exercise ended up under "Core &
+  // Midline": tier C was really "smaller/isolation work," not "core work," but the UI hardcoded that
+  // mapping. CORE_MUSCLES lists the muscle tags that make an exercise's PRIMARY target the midline.
+  var CORE_MUSCLES = /* @__PURE__ */ new Set(["core", "obliques", "rectus_abdominis", "iliopsoas", "hip_flexors", "erectors"]);
+  // Editorial overrides for entries whose core/erectors tag is present but incidental to the exercise's
+  // actual training purpose, reasoned individually rather than swept in by the tag alone — kettlebell
+  // halo (shoulder/mobility drill; obliques is a minor stabilizer role) and the sandbag rotational lunge
+  // (quad/glute-driven lunge pattern; obliques is incidental to the rotational reach) are isolation/
+  // single-exercise judgment calls. The rest are all loaded carries, row variants, or ballistic hip-hinge
+  // lifts where a trailing "core"/"erectors" tag describes background bracing or an isometric hip-hinge
+  // hold, not the training stimulus — the row family (barbell/bent-over/Pendlay row) is braced-back
+  // stabilization under a lat-driven pull, and the clean/toss/flip family (log/sandbag clean, sandbag
+  // toss, tire flip) is explosive hip-hinge-to-shoulder work, same reasoning as the carries next to them.
+  // Turkish get-up and sandbag get-up were deliberately EXCLUDED from this list: unlike a carry, row, or
+  // ballistic lift, their whole point is maintaining midline/shoulder stability through a slow multi-
+  // position transition, so they correctly stay "core" under the plain CORE_MUSCLES rule below.
+  var CORE_DISPLAY_OVERRIDE = /* @__PURE__ */ new Set([
+    "kettlebell_halo", "sandbag_rotational_lunge",
+    "kettlebell_clean_and_press", "kettlebell_renegade_row", "kettlebell_snatch_single_arm",
+    "one_arm_dumbbell_snatch", "sandbag_carry", "sandbag_shouldering", "sandbag_walk_farmer_s_walk",
+    "sandbag_zercher_carry", "suspension_trainer_inverted_row", "yoke_walk", "zercher_carry",
+    "bb_row", "barbell_bent_over_row", "bent_over_row", "pendlay_row",
+    "log_clean_and_press", "sandbag_clean", "sandbag_over_the_shoulder_toss", "tire_flip"
+  ]);
+  function accessoryGroup(a) {
+    if (CORE_DISPLAY_OVERRIDE.has(a.id)) return "accessory";
+    return (a.muscles || []).some((m) => CORE_MUSCLES.has(m)) ? "core" : "accessory";
+  }
 
   // src/mains.ts
   var MAIN_MOVEMENTS = [
@@ -2266,7 +2283,7 @@ var _ZK = (() => {
         const hasUpper = slots.some((s) => s.lift == null);
         const pushAcc = (lift, excl, budget) => {
           for (const a of selectAccessories(lift, phase, available, trimAccessories || deload, excl, blockIndex, budget)) {
-            items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
+            items.push({ group: accessoryGroup(a), tier: a.tier, name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
           }
         };
         if (anchors.length >= 2 || (anchors.length === 1 && hasUpper)) {
@@ -2338,7 +2355,7 @@ var _ZK = (() => {
         cue: mv.cue + " " + METHOD_CUE[method]
       });
       for (const a of selectAccessories(lift, phase, available, trimAccessories || deload, [mv.name], blockIndex)) {
-        items.push({ group: a.tier === "B" ? "accessory" : "core", name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
+        items.push({ group: accessoryGroup(a), tier: a.tier, name: a.name, sets: a.sets, reps: a.reps, rest: `${a.restSec}s`, cue: a.cue, muscles: a.muscles });
       }
       return items;
     });
@@ -2384,6 +2401,7 @@ var _ZK = (() => {
     taperMainPrescription,
     taperPlan,
     selectAccessories,
+    accessoryGroup,
     selectMain,
     MAIN_MOVEMENTS,
     ACCESSORIES,
@@ -2426,7 +2444,7 @@ function settingsToDOM(){                            // mirror state onto contro
   if(wd.length&&Array.isArray(state.trainingDays)) wd.forEach(b=>b.classList.toggle("on",state.trainingDays.includes(+b.dataset.d)));
 }
 function loadStore(){try{const r=localStorage.getItem(STORE);return r?JSON.parse(r):null;}catch(e){state.storeOK=false;return null;}}
-function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,altLift:state.altLift,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,warmupSwaps:state.warmupSwaps,potOpt:state.potOpt,potBySession:state.potBySession,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:SETTING_IDS.reduce((o,k)=>{o[k]=S(k);return o;},{})}));}catch(e){state.storeOK=false;}}
+function saveAll(){try{localStorage.setItem(STORE,JSON.stringify({maxes:state.maxes,unit:state.unit,log:state.log,swaps:state.swaps,pins:state.pins,altLift:state.altLift,bands:state.bands,deloadWeek:state.deloadWeek,autoReg:state.autoReg,handoffDismissed:state.handoffDismissed,checklist:state.checklist,restBy:state.restBy,meetAttempts:state.meetAttempts,attemptBase:state.attemptBase,phaseOverride:state.phaseOverride,rebaseSeen:state.rebaseSeen,notes:state.notes,warmupSwaps:state.warmupSwaps,trainingDays:state.trainingDays,cycleStart:state.cycleStart,settings:SETTING_IDS.reduce((o,k)=>{o[k]=S(k);return o;},{})}));}catch(e){state.storeOK=false;}}
 // ---- dual rest timer (ours): fixed bottom bar; auto-started on set/exercise completion; +15/-15 cumulative; skip ----
 const RestTimer=(function(){
   let remaining=0, iv=null, kind="set", bar=null, actx=null;
@@ -2499,12 +2517,15 @@ const SWAP_GYM=["barbell","rack","dumbbell","cable","bench","bodyweight","machin
 function altsFor(it,day){
   const L=(it.group==="main")?it.lift:((day.find(x=>x.group==="main")||{}).lift);
   if(it.group==="main") return ZK.MAIN_MOVEMENTS.filter(m=>m.lift===L&&m.equipment.every(q=>SWAP_GYM.includes(q))&&(it.method?m.methods.includes(it.method):true)&&m.name!==it.name).sort((a,c)=>c.specificity-a.specificity).map(m=>({id:m.id,type:"main",label:m.name,sub:Math.round(m.specificity*100)+"% specific"}));
-  const tier=it.group==="accessory"?"B":"C";
+  // (ours) tier now lives on the item itself (independent of its display group \u2014 see accessoryGroup),
+  // not inferred from group. Old logged/pinned items from before this change won't carry it.tier; fall
+  // back to the group-inferred guess so their swap panel still works.
+  const tier=it.tier||(it.group==="accessory"?"B":"C");
   return ZK.ACCESSORIES.filter(a=>a.emphasis.includes(L)&&a.tier===tier&&a.equipment.every(q=>SWAP_GYM.includes(q))&&a.name!==it.name).map(a=>({id:a.id,type:"acc",label:a.name,sub:a.sets+"\u00d7"+a.reps}));
 }
 function applySwapToItem(it,alt){   // mutate a day item in place (used for live swaps without a full recompute)
   if(alt.type==="main"&&it.group==="main"){ const mv=ZK.MAIN_MOVEMENTS.find(m=>m.id===alt.id); if(mv){ it.name=mv.name; it.cue=mv.cue; it.swapped=true; if(it.zone!=null) it.load=ZK.roundToPlates(ZK.ZONE_PCT[it.zone]*effMaxOf(it.lift)*mv.loadFactor,kit().plates,kit().bar); } }
-  else if(alt.type==="acc"&&(it.group==="accessory"||it.group==="core")){ const ac=ZK.ACCESSORIES.find(a=>a.id===alt.id); if(ac){ it.name=ac.name; it.sets=ac.sets; it.reps=ac.reps; it.rest=ac.restSec+"s"; it.cue=ac.cue; it.swapped=true; } }
+  else if(alt.type==="acc"&&(it.group==="accessory"||it.group==="core")){ const ac=ZK.ACCESSORIES.find(a=>a.id===alt.id); if(ac){ it.name=ac.name; it.sets=ac.sets; it.reps=ac.reps; it.rest=ac.restSec+"s"; it.cue=ac.cue; it.muscles=ac.muscles; it.tier=ac.tier; it.group=ZK.accessoryGroup(ac); it.swapped=true; } }
 }
 // ---- per-exercise between-sets rest (ours): timer uses each exercise's own prescribed rest, overridable + persisted by exercise ----
 function mmss(s){ s=Math.max(0,Math.round(+s||0)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); }
@@ -2722,26 +2743,12 @@ const WARMUP_ALTS=[
   {id:"hip_flexion_inv_ham",name:"Hip flexion to inverted hamstring",dose:"10"},
   {id:"ys_ts_band",name:"Y's and T's with band",dose:"2 \u00d7 10 each"},
 ];
-// (ours) Potentiation doses are REDUCED from Table 15.1, which prescribes for a field-sport session that
-// continues into more jumping. Leading into a heavy squat the goal is a primed CNS, not tired legs — and
-// Ch. 15 warns not to "let the appeal of PAPE distort the goals of a session." Roughly half the contacts.
-const POTENTIATE_OPTS=[
-  {id:"cmj_box",name:"Countermovement jump to box",sets:2,reps:3,src:"T15.1 2\u00d76"},
-  {id:"squat_jump_box",name:"Squat jump to box",sets:2,reps:3,src:"T15.1 2\u00d76"},
-  {id:"low_hurdle_jump",name:"Low hurdle jump",sets:2,reps:3,src:"T15.1 2\u00d75"},
-  {id:"med_ball_slam",name:"Light med ball slam",sets:2,reps:5,src:"T15.1 3\u00d76"},
-];
-const POT_REST_DEFAULT=180;
 const REST_SET_DEFAULT=120;      // fallback only — per-exercise rest is derived from the prescription and editable in the log
 const REST_EX_DEFAULT=180;       // between exercises; adjust in the moment with the timer's ±15s buttons      // Table 15.2: rest before the main activity 3-12 min (heavy preconditioning)
 function warmupPlan(){
   const ov=state.warmupSwaps||{};
   const pick=(base)=>base.map(x=>{ const s=ov[x.id]; if(!s) return x; const alt=WARMUP_ALTS.concat(WARMUP_RAISE,WARMUP_ACTIVATE).find(a=>a.id===s); return alt?Object.assign({},alt,{slot:x.id}):x; });
   return {raise:pick(WARMUP_RAISE),activate:pick(WARMUP_ACTIVATE)};
-}
-function potentiationPick(){
-  const id=state.potOpt||POTENTIATE_OPTS[0].id;
-  return POTENTIATE_OPTS.find(o=>o.id===id)||POTENTIATE_OPTS[0];
 }
 function warmupRamp(work){
   const K=kit(), bar=K.bar;
@@ -2810,9 +2817,6 @@ function renderLog(){
   let html="";
   
   // ---- RAMP warm-up: Raise, then Activate & Mobilize (Ch. 15 T15.1) ----
-  const pot=potentiationPick();
-  const potEligible=(b.phase==="transmutative"||b.phase==="realizational");
-  const potOn=potEligible && (state.potBySession||{})[sid]===1;
   { const wp=warmupPlan();
     html+='<div class="rampbox"><button type="button" class="ramphd2 wutog" aria-expanded="true">'
       +'<span>Warm-up \u00b7 RAMP</span><span class="rampsrc">NSCA T15.1</span><b class="wuchev">\u203a</b></button>'
@@ -2830,7 +2834,6 @@ function renderLog(){
     phase("Activate &amp; mobilize",wp.activate,"a");
     html+='</div></div>';   // close .wubody and .rampbox
   }
-  const _firstMain=day.findIndex(x=>x.group==="main"&&x.load!=null);   // potentiation attaches to the first main lift only
   day.forEach((it,xi)=>{
     const itSaved=saved.filter(s=>s.exName===it.name);
     const prev=priorSetsFor(it.name);
@@ -2849,20 +2852,6 @@ function renderLog(){
       if(wu.length){ html+=`<button type="button" class="wuhd wutog" aria-expanded="true"><span>Warm-up \u2014 ramp to ${it.load} ${state.unit}</span><span class="wucount">${wu.length} sets</span><b class="wuchev">\u203a</b></button><div class="wubody">`;
         wu.forEach((s,j)=>{ html+=`<div class="wurow" data-ex="${xi}" data-wu="${j}"><input type="checkbox" class="wuchk" data-ex="${xi}" data-wu="${j}"><span class="wun">W${j+1}</span><span class="wul">${s.reps} \u00d7 ${s.load}<span class="u">${state.unit}</span></span><span class="wup">${s.pct}%</span></div>`; });
         html+=`</div>`; }
-      // Potentiation sits AFTER the ramp and immediately before the top set: PAP decays over 3-12 min
-      // (T15.2), so a full ramp in between would spend most of the window. The ramp singles (60-90% 1RM)
-      // are themselves the most-studied PAP stimulus — the jumps stack a fast, low-fatigue primer on top.
-      if(_firstMain===xi){
-        if(potOn){
-          html+='<div class="potblock"><div class="potbhd">Potentiate <span class="potsrc">'+pot.src+' \u2192 reduced (<b>ours</b>)</span><button class="potoff" type="button" title="remove for this session">\u00d7</button></div>';
-          html+='<div class="wrow'+(clkW("p:0")?" checked":"")+'" data-w="p:0"><input type="checkbox" class="wchk" data-w="p:0"'+(clkW("p:0")?" checked":"")+'>'
-            +'<span class="wnm">'+pot.name+'</span><span class="wds">'+pot.sets+' \u00d7 '+pot.reps+'</span>'
-            +'<button class="wsw potsw" type="button" title="swap">\u21c4</button></div><div class="wswpanel hidden potpanel"></div>';
-          html+='<div class="potnote">Tick it to start a <b>'+Math.round(POT_REST_DEFAULT/60)+' min</b> rest, then take your top set \u2014 the interval is the mechanism (T15.2: 3\u201312 min).</div></div>';
-        } else if(potEligible){
-          html+='<div class="potoffer"><span class="potofftxt">Ramp done. Add a potentiation set before your top set \u2014 <b>'+pot.name+' '+pot.sets+'\u00d7'+pot.reps+'</b>? Skip it on a flat day.</span><button class="potadd" type="button">Add</button></div>';
-        }
-      }
     }
     html+=`<div class="logrow loghd"><span></span><span class="logn">SET</span><span class="lprev">PREVIOUS</span><span class="lcol">${state.unit.toUpperCase()}</span><span class="lcol">REPS</span><span class="lcol">RPE</span></div>`;
     for(let i=0;i<it.sets;i++){
@@ -2929,15 +2918,14 @@ function renderLog(){
   lp.appendChild(nav);
   nav.querySelector("#lgprev").addEventListener("click",()=>setActiveEx((state.logActiveEx||0)-1,true));
   nav.querySelector("#lgnext").addEventListener("click",()=>setActiveEx(Math.min(exCards.length-1,(state.logActiveEx||0)+1),true));
-  // ---- RAMP warm-up wiring: tick, swap, and the potentiation rest interval ----
+  // ---- RAMP warm-up wiring: tick and swap ----
   lp.querySelectorAll(".wchk").forEach(cb=>cb.addEventListener("change",()=>{
     const k="w:"+cb.getAttribute("data-w");
     if(cb.checked) _clk0[k]=1; else delete _clk0[k];
     const row=lp.querySelector('.wrow[data-w="'+cb.getAttribute("data-w")+'"]'); if(row) row.classList.toggle("checked",cb.checked);
-    if(cb.checked&&cb.getAttribute("data-w")==="p:0"&&typeof RestTimer!=="undefined") RestTimer.start("set",+POT_REST_DEFAULT);
     saveAll();
   }));
-  lp.querySelectorAll(".wsw:not(.potsw)").forEach(btn=>btn.addEventListener("click",()=>{
+  lp.querySelectorAll(".wsw").forEach(btn=>btn.addEventListener("click",()=>{
     const slot=btn.getAttribute("data-slot"), panel=lp.querySelector('.wswpanel[data-slot="'+slot+'"]');
     if(!panel) return;
     if(!panel.classList.contains("hidden")){ panel.classList.add("hidden"); panel.innerHTML=""; return; }
@@ -2949,20 +2937,6 @@ function renderLog(){
       panel.appendChild(b2);
     });
   }));
-  { const addB=lp.querySelector(".potadd");
-    if(addB) addB.addEventListener("click",()=>{ state.potBySession=state.potBySession||{}; state.potBySession[sid]=1; saveAll(); renderLog(); });
-    const offB=lp.querySelector(".potoff");
-    if(offB) offB.addEventListener("click",()=>{ if(state.potBySession) delete state.potBySession[sid]; delete _clk0["w:p:0"]; saveAll(); renderLog(); });
-  }
-  { const pb=lp.querySelector(".potsw"), pp=lp.querySelector(".potpanel");
-    if(pb&&pp) pb.addEventListener("click",()=>{
-      if(!pp.classList.contains("hidden")){ pp.classList.add("hidden"); pp.innerHTML=""; return; }
-      pp.classList.remove("hidden"); pp.innerHTML="";
-      POTENTIATE_OPTS.forEach(o2=>{ const b2=el("button","swapopt");
-        b2.innerHTML="<b>"+o2.name+"</b><span>"+o2.sets+" \u00d7 "+o2.reps+" \u00b7 "+o2.src+"</span>";
-        b2.addEventListener("click",()=>{ state.potOpt=o2.id; saveAll(); renderLog(); });
-        pp.appendChild(b2); });
-    }); }
   // ---- intra-session adjustment (ours): a set logged well over its target RPE offers to drop the REMAINING sets ----
   day.forEach((it,xi)=>{
     const rows=[...lp.querySelectorAll('.logrow[data-ex="'+xi+'"][data-set]')];
@@ -3203,7 +3177,7 @@ function computeTodaySnapshot(opts){
   day.forEach((it,idx)=>{
     const ov=state.swaps[`${b.index}|${gw}|${di}|${idx}`]||state.swaps[`${b.index}|${di}|${idx}`]; if(!ov) return;
     if(ov.type==="main"&&it.group==="main"){const mv=ZK.MAIN_MOVEMENTS.find(m=>m.id===ov.id); if(mv){it.name=mv.name;it.cue=mv.cue;it.swapped=true;it.load=ZK.roundToPlates(ZK.ZONE_PCT[it.zone]*effMaxOf(it.lift)*mv.loadFactor,kit().plates,kit().bar);}}
-    else if(ov.type==="acc"&&(it.group==="accessory"||it.group==="core")){const ac=ZK.ACCESSORIES.find(a=>a.id===ov.id); if(ac){it.name=ac.name;it.sets=ac.sets;it.reps=ac.reps;it.rest=ac.restSec+"s";it.cue=ac.cue;it.swapped=true;}}
+    else if(ov.type==="acc"&&(it.group==="accessory"||it.group==="core")){const ac=ZK.ACCESSORIES.find(a=>a.id===ov.id); if(ac){it.name=ac.name;it.sets=ac.sets;it.reps=ac.reps;it.rest=ac.restSec+"s";it.cue=ac.cue;it.muscles=ac.muscles;it.tier=ac.tier;it.group=ZK.accessoryGroup(ac);it.swapped=true;}}
   });
   // (ours) standalone box-squat / sumo-deadlift swap — separate state bucket (state.altLift), separate
   // from state.swaps above. Scoped to exactly the two lifts in ALT_LIFT_SCOPE; does not touch the
@@ -4779,8 +4753,6 @@ document.querySelectorAll("#wdpick button").forEach(b=>b.addEventListener("click
     if(sv.rebaseSeen) state.rebaseSeen=sv.rebaseSeen;
     if(sv.notes) state.notes=sv.notes;
     if(sv.warmupSwaps) state.warmupSwaps=sv.warmupSwaps;
-    if(sv.potOpt) state.potOpt=sv.potOpt;
-    if(sv.potBySession) state.potBySession=sv.potBySession;
     if(sv.attemptBase) state.attemptBase=sv.attemptBase;
   if(sv.cycleStart) state.cycleStart=sv.cycleStart;
   if(Array.isArray(sv.trainingDays)) state.trainingDays=sv.trainingDays;
